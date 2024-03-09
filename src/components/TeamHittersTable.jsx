@@ -51,6 +51,7 @@ export default function TeamHittersTable({ selectedTeam, statType, setLineup, av
 
   return (
     <>
+      <h2 className='text-2xl font-semibold text-center mb-4'>{selectedTeam.name} Lineup</h2>
       <Table data={dataTeams} columns={[...columns, addPlayerButton]} />
     </>
   );
