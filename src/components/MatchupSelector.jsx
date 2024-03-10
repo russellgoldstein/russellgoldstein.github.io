@@ -68,6 +68,7 @@ export default function MatchupSelector() {
       )}
       {playByPlay.length === 0 && (
         <>
+          <h2 className='text-2xl font-semibold text-center mb-4'>Select Players</h2>
           <div className='flex flex-col md:flex-row justify-between'>
             <TeamLineupTable
               statType='default'

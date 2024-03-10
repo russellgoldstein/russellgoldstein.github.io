@@ -16,9 +16,6 @@ export default function TeamList({
   selectedTeam,
   setSelectedTeam,
 }) {
-  console.log('TeamList hittingLineup', hittingLineup);
-  console.log('TeamList pitchingLineup', pitchingLineup);
-
   const [availableHitters, setAvailableHitters] = useState([]);
   const [availablePitchers, setAvailablePitchers] = useState([]);
   const [statType, setStatType] = useState('default');
@@ -43,8 +40,6 @@ export default function TeamList({
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  console.log('TeamList availableHitters', availableHitters);
-  console.log('TeamList availablePitchers', availablePitchers);
   return (
     <>
       <div className='flex flex-container flex-row space-x-2 justify-between items-center'>
