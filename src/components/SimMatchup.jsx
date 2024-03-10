@@ -34,9 +34,18 @@ export const SimMatchup = ({
     setAwayBoxScore(awayBoxScore);
   };
 
+  const isPlayBallButtonDisabled = () => {
+    return (
+      awayTeamHitters.length < 9 ||
+      awayTeamPitchers.length < 1 ||
+      homeTeamHitters.length < 9 ||
+      homeTeamPitchers.length < 1
+    );
+  };
+
   return (
     <div className='flex flex-container flex-col space-x-2 justify-center items-center'>
-      <PrimaryButtonWithIcon onClick={submitMatchup}>
+      <PrimaryButtonWithIcon onClick={submitMatchup} disabled={isPlayBallButtonDisabled()}>
         <Baseball />
         <span className='ml-2'> Play Ball!</span>
       </PrimaryButtonWithIcon>

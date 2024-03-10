@@ -9,7 +9,14 @@ import UserPlus from './icons/UserPlus';
 const defaultColumns = getDefaultHitterColumns();
 const advancedColumns = getAdvancedHitterColumns();
 
-export default function TeamHittersTable({ selectedTeam, statType, setLineup, availableHitters, setAvailableHitters }) {
+export default function TeamHittersTable({
+  selectedTeam,
+  statType,
+  lineup,
+  setLineup,
+  availableHitters,
+  setAvailableHitters,
+}) {
   const addPlayerToLineup = (player) => {
     setLineup((currentLineup) => [...currentLineup, player]); // Use functional update
     setAvailableHitters((currentHitters) => currentHitters.filter((hitter) => hitter.id !== player.id));
@@ -19,7 +26,7 @@ export default function TeamHittersTable({ selectedTeam, statType, setLineup, av
 
   const addPlayerButton = columnHelper.accessor('addPlayer', {
     header: 'Actions',
-    cell: ({ row }) => <UserPlus onClick={() => addPlayerToLineup(row.original)} />,
+    cell: ({ row }) => <UserPlus disabled={lineup.length === 9} onClick={() => addPlayerToLineup(row.original)} />,
     sticky: 'right',
   });
 

@@ -1,15 +1,16 @@
-export default function UserPlus({ onClick }) {
+export default function UserPlus({ onClick, disabled }) {
   return (
     <svg
-      onClick={onClick}
-      style={{ cursor: 'pointer' }}
+      disabled={disabled}
+      onClick={disabled ? null : onClick}
+      style={{ cursor: disabled ? 'not-allowed' : 'pointer' }}
       xmlns='http://www.w3.org/2000/svg'
       class='icon icon-tabler icon-tabler-user-plus'
       width='28'
       height='28'
       viewBox='0 0 24 24'
       stroke-width='1.5'
-      stroke='#00b341'
+      stroke={disabled ? 'gray' : '#00b341'}
       fill='none'
       stroke-linecap='round'
       stroke-linejoin='round'

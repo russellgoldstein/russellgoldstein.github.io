@@ -12,6 +12,7 @@ const advancedColumns = getAdvancedPitcherColumns();
 export default function TeamPitchersTable({
   selectedTeam,
   statType,
+  lineup,
   setLineup,
   availablePitchers,
   setAvailablePitchers,
@@ -25,7 +26,7 @@ export default function TeamPitchersTable({
 
   const addPlayerButton = columnHelper.accessor('addPlayer', {
     header: 'Actions',
-    cell: ({ row }) => <UserPlus onClick={() => addPlayerToLineup(row.original)} />,
+    cell: ({ row }) => <UserPlus disabled={lineup.length === 1} onClick={() => addPlayerToLineup(row.original)} />,
     sticky: 'right',
   });
 
