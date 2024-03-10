@@ -68,7 +68,6 @@ export default function MatchupSelector() {
       )}
       {playByPlay.length === 0 && (
         <>
-          <h2 className='text-2xl font-semibold text-center mb-4'>Select Players</h2>
           <div className='flex flex-col md:flex-row justify-between'>
             <TeamLineupTable
               statType='default'
@@ -87,6 +86,7 @@ export default function MatchupSelector() {
           </div>
           <div className='flex flex-col md:flex-row'>
             <div className='flex-container w-full'>
+              <h2 className='text-2xl font-semibold text-center mb-4'>Select Players</h2>
               <Tabs>
                 {currentTab === 'home-team' && (
                   <>
