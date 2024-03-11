@@ -1,18 +1,13 @@
+import { useSelector } from 'react-redux';
 import { usePlayGameMutation } from '../services/myApi';
 import { PrimaryButtonWithIcon } from './PrimaryButtonWithIcon';
 import { Baseball } from './icons/Baseball';
 
-export const SimMatchup = ({
-  awayTeamHitters,
-  awayTeamPitchers,
-  homeTeamHitters,
-  homeTeamPitchers,
-  setPlayByPlay,
-  setHomeLinescore,
-  setAwayBoxScore,
-  setHomeBoxScore,
-  setAwayLinescore,
-}) => {
+export const SimMatchup = ({ setPlayByPlay, setHomeLinescore, setAwayBoxScore, setHomeBoxScore, setAwayLinescore }) => {
+  const awayTeamHitters = useSelector((state) => state.teams.teams.away.hitters);
+  const awayTeamPitchers = useSelector((state) => state.teams.teams.away.pitchers);
+  const homeTeamHitters = useSelector((state) => state.teams.teams.home.hitters);
+  const homeTeamPitchers = useSelector((state) => state.teams.teams.home.pitchers);
   const [playGame, { error: playGameError, isLoading: playGameLoading }] = usePlayGameMutation();
 
   const submitMatchup = async () => {

@@ -6,11 +6,19 @@ import { createColumnHelper } from '@tanstack/react-table';
 import UserMinus from './icons/UserMinus';
 import ChevronUp from './icons/ChevronUp';
 import ChevronDown from './icons/ChevronDown';
+import { useDispatch, useSelector } from 'react-redux';
+import { setTeamHitters } from '../store/teamSlice';
+import { addPlayerToAvailablePlayers } from '../store/availablePlayersSlice';
 
 const defaultColumns = getDefaultHitterColumns();
 const advancedColumns = getAdvancedHitterColumns();
 
-export default function TeamHittersLineupTable({ lineup, setLineup, availableHitters, setAvailableHitters, statType }) {
+export default function TeamHittersLineupTable({ statType, teamType }) {
+  const lineup = useSelector((state) => state.teams.teams[teamType].hitters);
+  const selectedTeam = useSelector((state) => state.selectedTeam.team);
+
+  const dispatch = useDispatch();
+
   const generateEmptySpots = () => {
     const emptySpots = [];
     for (let i = lineup.length; i < 9; i++) {
@@ -20,8 +28,11 @@ export default function TeamHittersLineupTable({ lineup, setLineup, availableHit
   };
 
   const removePlayerFromLineup = (player) => {
-    setLineup(lineup.filter((hitter) => hitter.id !== player.id));
-    setAvailableHitters([...availableHitters, player]);
+    dispatch(setTeamHitters({ teamType, hitters: lineup.filter((hitter) => hitter.id !== player.id) }));
+    // TODO: this selectedTeam will need to be fixed when we add players from different MLB teams
+    dispatch(
+      addPlayerToAvailablePlayers({ year: 2023, teamAbbreviation: selectedTeam.id, player, playerType: 'hitters' })
+    );
   };
 
   const movePlayerUp = (player) => {
@@ -31,7 +42,7 @@ export default function TeamHittersLineupTable({ lineup, setLineup, availableHit
       const temp = newLineup[index];
       newLineup[index] = newLineup[index - 1];
       newLineup[index - 1] = temp;
-      setLineup(newLineup);
+      dispatch(setTeamHitters({ teamType, hitters: newLineup }));
     }
   };
 
@@ -42,7 +53,7 @@ export default function TeamHittersLineupTable({ lineup, setLineup, availableHit
       const temp = newLineup[index];
       newLineup[index] = newLineup[index + 1];
       newLineup[index + 1] = temp;
-      setLineup(newLineup);
+      dispatch(setTeamHitters({ teamType: 'home', hitters: newLineup }));
     }
   };
 

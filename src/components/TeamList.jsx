@@ -7,19 +7,12 @@ import { ToggleSwitch } from '../pages/component/ToggleSwitch';
 import Tabs from './Tabs';
 import UnselectedTab from './UnselectedTab';
 import SelectedTab from './SelectedTab';
+import { useSelector } from 'react-redux';
 
-export default function TeamList({
-  hittingLineup,
-  setHittingLineup,
-  pitchingLineup,
-  setPitchingLineup,
-  selectedTeam,
-  setSelectedTeam,
-}) {
-  const [availableHitters, setAvailableHitters] = useState([]);
-  const [availablePitchers, setAvailablePitchers] = useState([]);
+export default function TeamList({ teamType }) {
   const [statType, setStatType] = useState('default');
   const [currentTab, setCurrentTab] = useState('hitters');
+  const selectedTeam = useSelector((state) => state.selectedTeam.team);
 
   useEffect(() => {
     const handleHashChange = () => {
@@ -43,7 +36,7 @@ export default function TeamList({
   return (
     <>
       <div className='flex flex-container flex-row space-x-2 justify-between items-center'>
-        <TeamSelector selected={selectedTeam} setSelected={setSelectedTeam} />
+        <TeamSelector />
         <ToggleSwitch
           isOn={statType === 'advanced'}
           handleToggle={() => setStatType(statType === 'default' ? 'advanced' : 'default')}
@@ -70,28 +63,14 @@ export default function TeamList({
           {currentTab === 'hitters' && (
             <div className='flex flex-col md:flex-row gap-4'>
               <div className='table-container w-full md:full'>
-                <TeamHittersTable
-                  selectedTeam={selectedTeam}
-                  lineup={hittingLineup}
-                  setLineup={setHittingLineup}
-                  availableHitters={availableHitters}
-                  setAvailableHitters={setAvailableHitters}
-                  statType={statType}
-                />
+                <TeamHittersTable teamType={teamType} statType={statType} />
               </div>
             </div>
           )}
           {currentTab === 'pitchers' && (
             <div className='flex flex-col md:flex-row gap-4'>
               <div className='table-container w-full md:full'>
-                <TeamPitchersTable
-                  selectedTeam={selectedTeam}
-                  lineup={pitchingLineup}
-                  setLineup={setPitchingLineup}
-                  availablePitchers={availablePitchers}
-                  setAvailablePitchers={setAvailablePitchers}
-                  statType={statType}
-                />
+                <TeamPitchersTable teamType={teamType} statType={statType} />
               </div>
             </div>
           )}

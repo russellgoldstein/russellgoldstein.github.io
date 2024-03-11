@@ -5,21 +5,29 @@ import Table from './Table';
 import { getAdvancedHitterColumns, getDefaultHitterColumns } from '../utils/consts';
 import { createColumnHelper } from '@tanstack/react-table';
 import UserPlus from './icons/UserPlus';
+import { useDispatch, useSelector } from 'react-redux';
+import { setTeamHitters } from '../store/teamSlice';
+import { removePlayerFromAvailablePlayers, setAvailablePlayersForTeam } from '../store/availablePlayersSlice';
 
 const defaultColumns = getDefaultHitterColumns();
 const advancedColumns = getAdvancedHitterColumns();
 
-export default function TeamHittersTable({
-  selectedTeam,
-  statType,
-  lineup,
-  setLineup,
-  availableHitters,
-  setAvailableHitters,
-}) {
+export default function TeamHittersTable({ statType, teamType }) {
+  const lineup = useSelector((state) => state.teams.teams[teamType].hitters);
+  const selectedTeam = useSelector((state) => state.selectedTeam.team);
+  const availablePlayers = useSelector((state) => state.availablePlayers);
+  const dispatch = useDispatch();
+
   const addPlayerToLineup = (player) => {
-    setLineup((currentLineup) => [...currentLineup, player]); // Use functional update
-    setAvailableHitters((currentHitters) => currentHitters.filter((hitter) => hitter.id !== player.id));
+    dispatch(setTeamHitters({ teamType, hitters: [...lineup, player] }));
+    dispatch(
+      removePlayerFromAvailablePlayers({
+        year: 2023,
+        teamAbbreviation: selectedTeam.id,
+        playerId: player.id,
+        playerType: 'hitters',
+      })
+    );
   };
 
   const columnHelper = createColumnHelper();
@@ -30,9 +38,6 @@ export default function TeamHittersTable({
     sticky: 'right',
   });
 
-  // const [findHittersByMLBTeamAndSeason, { data: teams, error: teamsError, isLoading: teamsLoading }] =
-  //   useFindHittersByMLBTeamAndSeasonQuery();
-
   const {
     data: teams,
     error: teamsError,
@@ -42,15 +47,24 @@ export default function TeamHittersTable({
     aseason: 2023,
   });
 
-  const dataTeams = availableHitters.map((team) => ({
-    ...team.player,
-    ...team,
-  }));
+  const dataTeams = availablePlayers?.[2023]?.[selectedTeam.id]?.hitters
+    ? availablePlayers[2023][selectedTeam.id].hitters.map((team) => ({
+        ...team.player,
+        ...team,
+      }))
+    : [];
   useEffect(() => {
     if (teams) {
-      setAvailableHitters(teams);
+      dispatch(
+        setAvailablePlayersForTeam({
+          year: 2023,
+          teamAbbreviation: selectedTeam.id,
+          players: teams,
+          playerType: 'hitters',
+        })
+      );
     }
-  }, [teams, setAvailableHitters]);
+  }, [teams, selectedTeam.id, dispatch]);
 
   if (teamsLoading) return <div>Loading...</div>;
   if (teamsError) return <div>Error: {teamsError.message}</div>;

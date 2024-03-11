@@ -6,17 +6,18 @@ import { createColumnHelper } from '@tanstack/react-table';
 import UserMinus from './icons/UserMinus';
 import ChevronUp from './icons/ChevronUp';
 import ChevronDown from './icons/ChevronDown';
+import { useDispatch, useSelector } from 'react-redux';
+import { setTeamPitchers } from '../store/teamSlice';
+import { addPlayerToAvailablePlayers } from '../store/availablePlayersSlice';
 
 const defaultColumns = getDefaultPitcherColumns();
 const advancedColumns = getAdvancedPitcherColumns();
 
-export default function TeamPitchersLineupTable({
-  lineup,
-  setLineup,
-  availablePitchers,
-  setAvailablePitchers,
-  statType,
-}) {
+export default function TeamPitchersLineupTable({ statType, teamType }) {
+  const lineup = useSelector((state) => state.teams.teams[teamType].pitchers);
+  const selectedTeam = useSelector((state) => state.selectedTeam.team);
+  const dispatch = useDispatch();
+
   const generateEmptySpots = () => {
     const emptySpots = [];
     for (let i = lineup.length; i < 1; i++) {
@@ -26,18 +27,21 @@ export default function TeamPitchersLineupTable({
   };
 
   const removePlayerFromLineup = (player) => {
-    setLineup(lineup.filter((pitcher) => pitcher.id !== player.id));
-    setAvailablePitchers([...availablePitchers, player]);
+    dispatch(setTeamPitchers({ teamType, pitchers: lineup.filter((pitcher) => pitcher.id !== player.id) }));
+    // TODO: this selectedTeam will need to be fixed when we add players from different MLB teams
+    dispatch(
+      addPlayerToAvailablePlayers({ year: 2023, teamAbbreviation: selectedTeam.id, player, playerType: 'pitchers' })
+    );
   };
 
   const movePlayerUp = (player) => {
-    const index = lineup.findIndex((hitter) => hitter.id === player.id);
+    const index = lineup.findIndex((pitcher) => pitcher.id === player.id);
     if (index > 0) {
       const newLineup = [...lineup];
       const temp = newLineup[index];
       newLineup[index] = newLineup[index - 1];
       newLineup[index - 1] = temp;
-      setLineup(newLineup);
+      dispatch(setTeamPitchers({ teamType, pitchers: newLineup }));
     }
   };
 
@@ -48,7 +52,7 @@ export default function TeamPitchersLineupTable({
       const temp = newLineup[index];
       newLineup[index] = newLineup[index + 1];
       newLineup[index + 1] = temp;
-      setLineup(newLineup);
+      dispatch(setTeamPitchers({ teamType, pitchers: newLineup }));
     }
   };
 

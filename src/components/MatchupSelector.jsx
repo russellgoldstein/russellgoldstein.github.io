@@ -9,14 +9,6 @@ import { GameResults } from './GameResults';
 import { TeamLineupTable } from './TeamLineupTable';
 
 export default function MatchupSelector() {
-  const [awayTeamHitters, setAwayTeamHitters] = useState([]);
-  const [awayTeamPitchers, setAwayTeamPitchers] = useState([]);
-  const [homeTeamHitters, setHomeTeamHitters] = useState([]);
-  const [homeTeamPitchers, setHomeTeamPitchers] = useState([]);
-
-  const [selectedHomeTeam, setSelectedHomeTeam] = useState(null);
-  const [selectedAwayTeam, setSelectedAwayTeam] = useState(null);
-
   const [homeBoxScore, setHomeBoxScore] = useState([]);
   const [awayBoxScore, setAwayBoxScore] = useState([]);
   const [homeLinescore, setHomeLinescore] = useState([]);
@@ -47,10 +39,6 @@ export default function MatchupSelector() {
   return (
     <div>
       <SimMatchup
-        awayTeamHitters={awayTeamHitters}
-        awayTeamPitchers={awayTeamPitchers}
-        homeTeamHitters={homeTeamHitters}
-        homeTeamPitchers={homeTeamPitchers}
         setPlayByPlay={setPlayByPlay}
         setHomeLinescore={setHomeLinescore}
         setAwayBoxScore={setAwayBoxScore}
@@ -69,20 +57,8 @@ export default function MatchupSelector() {
       {playByPlay.length === 0 && (
         <>
           <div className='flex flex-col md:flex-row justify-between'>
-            <TeamLineupTable
-              statType='default'
-              hittingLineup={awayTeamHitters}
-              setHittingLineup={setAwayTeamHitters}
-              pitchingLineup={awayTeamPitchers}
-              setPitchingLineup={setAwayTeamPitchers}
-            />
-            <TeamLineupTable
-              statType='default'
-              hittingLineup={homeTeamHitters}
-              setHittingLineup={setHomeTeamHitters}
-              pitchingLineup={homeTeamPitchers}
-              setPitchingLineup={setHomeTeamPitchers}
-            />
+            <TeamLineupTable statType='default' teamType='away' />
+            <TeamLineupTable statType='default' teamType='home' />
           </div>
           <div className='flex flex-col md:flex-row'>
             <div className='flex-container w-full'>
@@ -103,26 +79,12 @@ export default function MatchupSelector() {
               </Tabs>
               {currentTab === 'away-team' && (
                 <>
-                  <TeamList
-                    hittingLineup={awayTeamHitters}
-                    setHittingLineup={setAwayTeamHitters}
-                    pitchingLineup={awayTeamPitchers}
-                    setPitchingLineup={setAwayTeamPitchers}
-                    selectedTeam={selectedAwayTeam}
-                    setSelectedTeam={setSelectedAwayTeam}
-                  />
+                  <TeamList teamType='away' />
                 </>
               )}
               {currentTab === 'home-team' && (
                 <>
-                  <TeamList
-                    hittingLineup={homeTeamHitters}
-                    setHittingLineup={setHomeTeamHitters}
-                    pitchingLineup={homeTeamPitchers}
-                    setPitchingLineup={setHomeTeamPitchers}
-                    selectedTeam={selectedHomeTeam}
-                    setSelectedTeam={setSelectedHomeTeam}
-                  />
+                  <TeamList teamType='home' />
                 </>
               )}
             </div>
