@@ -6,7 +6,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import LoginPage from './components/LoginPage';
 import './css/style.css';
 import './charts/ChartjsConfig';
-import MatchupSelector from './components/MatchupSelector';
+import MatchupSelector from './components/matchup/MatchupSelector';
 
 function App() {
   const location = useLocation();
