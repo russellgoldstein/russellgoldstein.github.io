@@ -7,6 +7,7 @@ import LoginPage from './components/LoginPage';
 import './css/style.css';
 import './charts/ChartjsConfig';
 import MatchupSelector from './components/matchup/MatchupSelector';
+import PlayerSim from './components/player-sim/PlayerSim';
 
 function App() {
   const location = useLocation();
@@ -22,6 +23,7 @@ function App() {
       <Route path='/auth/success' element={<AuthSuccess />} />
       <Route element={<ProtectedRoute />}>
         <Route path='/' element={<MatchupSelector />} />
+        <Route path='/player-sim' element={<PlayerSim />} />
       </Route>
     </Routes>
   );

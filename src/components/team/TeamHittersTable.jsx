@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import '../index.css';
-import { useFindHittersByMLBTeamAndSeasonQuery } from '../../services/myApi';
+import { useFindHittersByMLBTeamAndSeasonQuery } from '../../services/fgApi';
 import Table from '../global/Table';
 import { getAdvancedHitterColumns, getDefaultHitterColumns } from '../../utils/consts';
 import { createColumnHelper } from '@tanstack/react-table';
