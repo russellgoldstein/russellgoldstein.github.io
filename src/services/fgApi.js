@@ -51,7 +51,7 @@ export const fgApi = createApi({
     }),
     findPitchersById: builder.query({
       query: (body) => ({
-        url: `pitchers-stats/${body.playerId}?aseason=${body.aseason}`,
+        url: `pitcher-stats/${body.playerId}?aseason=${body.aseason}`,
         method: 'GET',
       }),
     }),
@@ -64,6 +64,13 @@ export const fgApi = createApi({
     playGame: builder.mutation({
       query: (body) => ({
         url: `play-game`,
+        method: 'POST',
+        body,
+      }),
+    }),
+    simPlayers: builder.mutation({
+      query: (body) => ({
+        url: `sim-players`,
         method: 'POST',
         body,
       }),
@@ -81,4 +88,5 @@ export const {
   useGetPlayersQuery,
   useFindHittersByIdQuery,
   useFindPitchersByIdQuery,
+  useSimPlayersMutation,
 } = fgApi;

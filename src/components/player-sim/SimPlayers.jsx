@@ -1,15 +1,30 @@
 import { PrimaryButtonWithIcon } from '../global/PrimaryButtonWithIcon';
 import { Baseball } from '../icons/Baseball';
-import SearchForm from '../global/SearchForm';
 import { useEffect, useState } from 'react';
 import { SearchPlayers } from '../global/SearchPlayers';
 import HittersTable from '../global/players/HittersTable';
+import PitchersTable from '../global/players/PitchersTable';
+import { useSimPlayersMutation } from '../../services/fgApi';
+import BoxScoreTable from '../matchup/BoxScoreTable';
+import { getHitterSimColumns } from '../../utils/consts';
+import Table from '../global/Table';
 
-export const SimPlayers = ({ setHitterBoxScore, setPitcherBoxScore }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+const hitterSimColumns = getHitterSimColumns();
+export const SimPlayers = () => {
   const [hitter, setHitter] = useState(null);
   const [pitcher, setPitcher] = useState(null);
+  const [hitterBoxScore, setHitterBoxScore] = useState([]);
+  const [pitcherBoxScore, setPitcherBoxScore] = useState([]);
+  const [simPlayers, { data: simPlay, error: simPlayError, isLoading: simPlayLoading }] = useSimPlayersMutation();
+
   const submitSim = async () => {
+    const result = await simPlayers({
+      hitterId: hitter?.id,
+      pitcher: pitcher?.id,
+      pa: 650,
+    });
+    console.log('result', result);
+    setHitterBoxScore([result.data.hitterBoxscore]);
     // const result = await playGame({
     //   awayTeamHitters,
     //   awayTeamPitchers,
@@ -32,7 +47,7 @@ export const SimPlayers = ({ setHitterBoxScore, setPitcherBoxScore }) => {
     return !hitter && !pitcher;
   };
 
-  console.log('in sim players component', hitter);
+  console.log('in sim players component', hitterBoxScore);
   return (
     <div className='flex flex-container flex-col space-x-2 justify-center items-center'>
       <PrimaryButtonWithIcon onClick={submitSim} disabled={isPlayBallButtonDisabled()}>
@@ -42,49 +57,18 @@ export const SimPlayers = ({ setHitterBoxScore, setPitcherBoxScore }) => {
       <div>
         {/* {playGameLoading && <div>Simulating Players...</div>}
         {playGameError && <div>Error Simulation: {playGameError.message}</div>} */}
+        {hitterBoxScore && hitterBoxScore.length > 0 && <Table columns={hitterSimColumns} data={hitterBoxScore} />}
       </div>
       <div>
-        Find Hitters
-        <SearchForm onSearch={setSearchTerm} />
-        {searchTerm && searchTerm.length > 2 && <SearchPlayers searchTerm={searchTerm} onClick={setHitter} />}
+        Find Hitter
+        <SearchPlayers onClick={setHitter} />
         <HittersTable statType='default' playerId={hitter?.id} />
+      </div>
+      <div>
+        Find Pitcher
+        <SearchPlayers onClick={setPitcher} />
+        <PitchersTable statType='default' playerId={pitcher?.id} />
       </div>
     </div>
   );
-};
-
-const processDataForBoxscore = (hitterData, pitcherData, team) => {
-  // Process hitters from both teams
-  const hitters = hitterData.map((hitter) => ({
-    ...hitter,
-    team: team,
-    name: hitter.player.name,
-    PA: hitter.plateAppearances,
-    R: hitter.runs,
-    H: hitter.hits,
-    '1B': hitter.singles,
-    '2B': hitter.doubles,
-    '3B': hitter.triples,
-    HR: hitter.homeruns,
-    RBI: hitter.rbi,
-    BB: hitter.walks,
-    SO: hitter.strikeouts,
-  }));
-
-  // Process pitchers
-  const pitcher = {
-    name: pitcherData.player.name,
-    team: team,
-    IP: pitcherData.outs / 3, // Assuming plate appearances can be directly converted to innings pitched, adjust based on actual logic
-    H: pitcherData.hits,
-    R: pitcherData.runs,
-    ER: pitcherData.runs, // Assuming runs are equivalent to earned runs, adjust if necessary
-    BB: pitcherData.walks,
-    SO: pitcherData.strikeouts,
-  };
-
-  return {
-    hitters,
-    pitchers: [pitcher],
-  };
 };

@@ -8,7 +8,6 @@ const defaultColumns = getDefaultHitterColumns();
 const advancedColumns = getAdvancedHitterColumns();
 
 export default function HittersTable({ statType, playerId }) {
-  console.log('in hitters table component', playerId);
   const {
     data: hitters,
     error: teamsError,
