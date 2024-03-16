@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-export const myApi = createApi({
-  reducerPath: 'myApi',
+export const fgApi = createApi({
+  reducerPath: 'fgApi',
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_API_BASE_URL + '/api',
     // prepareHeaders: (headers) => {
@@ -27,25 +27,50 @@ export const myApi = createApi({
     // Adding a mutation to call a custom method
     findUniqueMLBTeams: builder.query({
       query: (body) => ({
-        url: `fangraphs-hitter-season-stats/mlb-teams`, // Adjust the URL to your specific service
+        url: `fangraphs-hitter-season-stats/mlb-teams`,
         method: 'GET',
       }),
     }),
     findHittersByMLBTeamAndSeason: builder.query({
       query: (body) => ({
-        url: `fangraphs-hitter-season-stats?AbbName=${body.AbbName}&aseason=${body.aseason}`, // Adjust the URL to your specific service
+        url: `fangraphs-hitter-season-stats?AbbName=${body.AbbName}&aseason=${body.aseason}`,
         method: 'GET',
       }),
     }),
     findPitchersByMLBTeamAndSeason: builder.query({
       query: (body) => ({
-        url: `fangraphs-pitcher-season-stats?AbbName=${body.AbbName}&aseason=${body.aseason}`, // Adjust the URL to your specific service
+        url: `fangraphs-pitcher-season-stats?AbbName=${body.AbbName}&aseason=${body.aseason}`,
+        method: 'GET',
+      }),
+    }),
+    findHittersById: builder.query({
+      query: (body) => ({
+        url: `hitter-stats/${body.playerId}?aseason=${body.aseason}`,
+        method: 'GET',
+      }),
+    }),
+    findPitchersById: builder.query({
+      query: (body) => ({
+        url: `pitcher-stats/${body.playerId}?aseason=${body.aseason}`,
+        method: 'GET',
+      }),
+    }),
+    getPlayers: builder.query({
+      query: (body) => ({
+        url: `players?firstName=${body.firstName}&lastName=${body.lastName}&type=${body.type}`,
         method: 'GET',
       }),
     }),
     playGame: builder.mutation({
       query: (body) => ({
-        url: `play-game`, // Adjust the URL to your specific service
+        url: `play-game`,
+        method: 'POST',
+        body,
+      }),
+    }),
+    simPlayers: builder.mutation({
+      query: (body) => ({
+        url: `sim-players`,
         method: 'POST',
         body,
       }),
@@ -60,4 +85,8 @@ export const {
   useFindPitchersByMLBTeamAndSeasonQuery,
   usePlayGameMutation,
   useFindHittersByMLBTeamAndSeasonQuery,
-} = myApi;
+  useGetPlayersQuery,
+  useFindHittersByIdQuery,
+  useFindPitchersByIdQuery,
+  useSimPlayersMutation,
+} = fgApi;

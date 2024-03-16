@@ -136,7 +136,7 @@ export const getDefaultHitterColumns = () => {
   const columnHelper = createColumnHelper();
 
   const columns = [
-    columnHelper.accessor((row) => `${row.first_name} ${row.last_name}`, {
+    columnHelper.accessor((row) => (row.player ? `${row.player?.first_name} ${row.player?.last_name}` : '--'), {
       id: 'name', // It's important to provide an id for custom accessors
       header: () => 'Name',
       cell: (info) => <span>{info.getValue()}</span>,
@@ -216,11 +216,85 @@ export const getDefaultHitterColumns = () => {
   return columns;
 };
 
+export const getHitterSimColumns = () => {
+  const columnHelper = createColumnHelper();
+
+  const columns = [
+    columnHelper.accessor((row) => (row.player ? `${row.player?.first_name} ${row.player?.last_name}` : '--'), {
+      id: 'name', // It's important to provide an id for custom accessors
+      header: () => 'Name',
+      cell: (info) => <span>{info.getValue()}</span>,
+      sticky: 'left', // Apply sticky if needed
+    }),
+    columnHelper.accessor('AB', {
+      header: 'AB',
+      cell: (info) => info.renderValue(),
+      align: 'right',
+    }),
+    columnHelper.accessor('H', {
+      header: 'H',
+      cell: (info) => info.renderValue(),
+      align: 'right',
+    }),
+    columnHelper.accessor('1B', {
+      header: '1B',
+      cell: (info) => info.renderValue(),
+      align: 'right',
+    }),
+    columnHelper.accessor('2B', {
+      header: '2B',
+      cell: (info) => info.renderValue(),
+      align: 'right',
+    }),
+    columnHelper.accessor('3B', {
+      header: '3B',
+      cell: (info) => info.renderValue(),
+      align: 'right',
+    }),
+    columnHelper.accessor('HR', {
+      header: 'HR',
+      cell: (info) => info.renderValue(),
+      align: 'right',
+    }),
+    columnHelper.accessor('BB', {
+      header: 'BB',
+      cell: (info) => info.renderValue(),
+      align: 'right',
+    }),
+    columnHelper.accessor('SO', {
+      header: 'K',
+      cell: (info) => info.renderValue(),
+      align: 'right',
+    }),
+    columnHelper.accessor('AVG', {
+      header: 'AVG',
+      cell: (info) => info.renderValue()?.replace(/^0+/, ''),
+      align: 'right',
+    }),
+    columnHelper.accessor('OBP', {
+      header: 'OBP',
+      cell: (info) => info.renderValue()?.replace(/^0+/, ''),
+      align: 'right',
+    }),
+    columnHelper.accessor('SLG', {
+      header: 'SLG',
+      cell: (info) => info.renderValue()?.replace(/^0+/, ''),
+      align: 'right',
+    }),
+    columnHelper.accessor('OPS', {
+      header: 'OPS',
+      cell: (info) => info.renderValue()?.replace(/^0+/, ''),
+      align: 'right',
+    }),
+  ];
+  return columns;
+};
+
 export const getAdvancedHitterColumns = () => {
   const columnHelper = createColumnHelper();
 
   const columns = [
-    columnHelper.accessor((row) => `${row.first_name} ${row.last_name}`, {
+    columnHelper.accessor((row) => (row.player ? `${row.player?.first_name} ${row.player?.last_name}` : '--'), {
       id: 'name', // It's important to provide an id for custom accessors
       header: () => 'Name',
       cell: (info) => <span>{info.getValue()}</span>,
@@ -279,7 +353,7 @@ export const getDefaultPitcherColumns = () => {
   const columnHelper = createColumnHelper();
 
   const columns = [
-    columnHelper.accessor((row) => `${row.first_name} ${row.last_name}`, {
+    columnHelper.accessor((row) => (row.player ? `${row.player?.first_name} ${row.player?.last_name}` : '--'), {
       id: 'name', // It's important to provide an id for custom accessors
       header: () => 'Name',
       cell: (info) => <span>{info.getValue()}</span>,
@@ -359,7 +433,7 @@ export const getAdvancedPitcherColumns = () => {
   const columnHelper = createColumnHelper();
 
   const columns = [
-    columnHelper.accessor((row) => `${row.first_name} ${row.last_name}`, {
+    columnHelper.accessor((row) => (row.player ? `${row.player?.first_name} ${row.player?.last_name}` : '--'), {
       id: 'name', // It's important to provide an id for custom accessors
       header: () => 'Name',
       cell: (info) => <span>{info.getValue()}</span>,

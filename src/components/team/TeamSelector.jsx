@@ -1,5 +1,5 @@
 import React from 'react';
-import { useFindUniqueMLBTeamsQuery } from '../../services/myApi';
+import { useFindUniqueMLBTeamsQuery } from '../../services/fgApi';
 import Dropdown from '../global/Dropdown';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSelectedTeam } from '../../store/selectedTeamSlice';

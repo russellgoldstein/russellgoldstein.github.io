@@ -1,0 +1,26 @@
+.search-results-container {
+  position: relative;
+}
+
+.search-results {
+  position: absolute;
+  z-index: 1000; /* Make sure it floats above other elements */
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 14%; /* Adjust as needed */
+  list-style: none;
+  margin-top: 5px;
+  padding: 0;
+  max-height: 200px; /* Adjust as needed */
+  overflow-y: auto;
+}
+
+.search-results li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.search-results li:hover {
+  background-color: #f0f0f0;
+}

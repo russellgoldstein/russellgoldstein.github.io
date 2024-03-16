@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import { PrimaryButtonWithIcon } from '../global/PrimaryButtonWithIcon';
 import { Baseball } from '../icons/Baseball';
-import { usePlayGameMutation } from '../../services/myApi';
+import { usePlayGameMutation } from '../../services/fgApi';
 
 export const SimMatchup = ({ setPlayByPlay, setHomeLinescore, setAwayBoxScore, setHomeBoxScore, setAwayLinescore }) => {
   const awayTeamHitters = useSelector((state) => state.teams.teams.away.hitters);
