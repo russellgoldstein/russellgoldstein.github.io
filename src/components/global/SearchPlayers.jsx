@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useGetPlayersQuery } from '../../services/fgApi';
 import './SearchPlayers.css';
 
-export function SearchPlayers({ onClick, onSearch }) {
+export default function SearchPlayers({ onClick, onSearch }) {
   const [isVisible, setIsVisible] = useState(false);
   const containerRef = useRef(null); // This ref is attached to the dropdown container
   const [searchValue, setSearchValue] = useState('');
