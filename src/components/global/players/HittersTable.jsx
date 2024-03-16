@@ -17,8 +17,6 @@ export default function HittersTable({ statType, playerId }) {
     playerId,
   });
 
-  console.log(hitters);
-
   if (teamsLoading) return <div>Loading...</div>;
   if (teamsError) return <div>Error: {teamsError.message}</div>;
   const columns = statType === 'default' ? defaultColumns : advancedColumns;
