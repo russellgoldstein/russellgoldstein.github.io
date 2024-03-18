@@ -6,15 +6,15 @@ function AuthSuccess() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // const hashParams = new URLSearchParams(location.hash.substring(1));
-    // const accessToken = hashParams.get('access_token');
+    const hashParams = new URLSearchParams(location.hash.substring(1));
+    console.log({ hashParams });
+    const accessToken = hashParams.get('token');
 
-    // if (accessToken) {
-    //   localStorage.setItem('feathers-jwt', accessToken);
+    if (accessToken) {
+      localStorage.setItem('baseball-sim-jwt', accessToken);
 
-    //   navigate('/');
-    // }
-    // console.log(location);
+      navigate('/');
+    }
     navigate('/');
   }, [location, navigate]);
 
