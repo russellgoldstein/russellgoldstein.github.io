@@ -6,7 +6,7 @@ import Table from '../global/Table';
 
 export default function GameList() {
   const [newGame, setNewGame] = useState(null);
-  const games = useGetGamesQuery();
+  const { data: games, error, isLoading } = useGetGamesQuery();
 
   const columnHelper = createColumnHelper();
   const columns = [
@@ -23,9 +23,11 @@ export default function GameList() {
     columnHelper.accessor('gameStatus', { header: 'Status' }),
   ];
 
-  return games && games.data && games.data.length > 0 ? (
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+  return games && games.length > 0 ? (
     <div>
-      <Table columns={columns} data={games.data} />
+      <Table columns={columns} data={games} />
     </div>
   ) : (
     <NewGame setNewGame={setNewGame} />

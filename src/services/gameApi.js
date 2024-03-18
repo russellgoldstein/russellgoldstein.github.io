@@ -4,21 +4,20 @@ export const gameApi = createApi({
   reducerPath: 'gameApi',
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_API_BASE_URL + '/api',
-    // prepareHeaders: (headers) => {
-    //   const token = getJwtToken();
-    //   if (token) {
-    //     headers.set('authorization', `Bearer ${token}`);
-    //   }
-    //   // This is where you could set headers common to all requests
-    //   return headers;
-    // },
-    // Adding response handler
-    // responseHandler: async (response) => {
-    //   if (response.status === 401) {
-    //     window.location.href = '/login';
-    //   }
-    //   return response;
-    // },
+    prepareHeaders: (headers) => {
+      const token = localStorage.getItem('baseball-sim-jwt');
+      if (token) {
+        headers.set('authorization', `Bearer ${token}`);
+      }
+      // This is where you could set headers common to all requests
+      return headers;
+    },
+    responseHandler: async (response) => {
+      if (response.status === 401) {
+        window.location.href = '/login';
+      }
+      return response.json();
+    },
   }),
   endpoints: (builder) => ({
     createGame: builder.mutation({
