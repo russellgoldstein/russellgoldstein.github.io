@@ -7,9 +7,10 @@ export default function Game() {
   const gameCode = urlParams.get('code');
   const { data: game, error: gameError, isLoading: gameIsLoading } = useGetGameQuery(gameCode);
 
+  console.log('game', game);
   if (gameIsLoading) return <div>Loading...</div>;
   if (gameError) return <div>Error: {gameError.message}</div>;
-  return game.data.gameState === 'Setup' ? (
+  return game.gameStatus === 'Setup' ? (
     <MatchupSelector />
   ) : (
     <div>

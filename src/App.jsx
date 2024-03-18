@@ -6,7 +6,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import LoginPage from './components/LoginPage';
 import './css/style.css';
 import './charts/ChartjsConfig';
-import MatchupSelector from './components/matchup/MatchupSelector';
+import MatchupSelectorPageWrapper from './components/matchup/MatchupSelectorPageWrapper';
 import PlayerSim from './components/player-sim/PlayerSim';
 import GameListWrapper from './components/play-game/GameListWrapper';
 import GameWrapper from './components/play-game/GameWrapper';
@@ -24,7 +24,7 @@ function App() {
       <Route path='/login' element={<LoginPage />} />
       <Route path='/auth/success' element={<AuthSuccess />} />
       <Route element={<ProtectedRoute />}>
-        <Route path='/sim' element={<MatchupSelector />} />
+        <Route path='/sim' element={<MatchupSelectorPageWrapper />} />
         <Route path='/sim/players' element={<PlayerSim />} />
         <Route path='/' element={<GameListWrapper />} />
         <Route path='/games' element={<GameListWrapper />} />

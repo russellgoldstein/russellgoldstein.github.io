@@ -38,7 +38,7 @@ export default function MatchupSelector() {
   }, []);
 
   return (
-    <PageWrapper>
+    <>
       <SimMatchup
         setPlayByPlay={setPlayByPlay}
         setHomeLinescore={setHomeLinescore}
@@ -92,6 +92,6 @@ export default function MatchupSelector() {
           </div>
         </>
       )}
-    </PageWrapper>
+    </>
   );
 }
