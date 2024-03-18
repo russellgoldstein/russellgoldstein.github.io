@@ -9,6 +9,7 @@ import './charts/ChartjsConfig';
 import MatchupSelector from './components/matchup/MatchupSelector';
 import PlayerSim from './components/player-sim/PlayerSim';
 import GameListWrapper from './components/play-game/GameListWrapper';
+import GameWrapper from './components/play-game/GameWrapper';
 
 function App() {
   const location = useLocation();
@@ -26,7 +27,8 @@ function App() {
         <Route path='/sim' element={<MatchupSelector />} />
         <Route path='/sim/players' element={<PlayerSim />} />
         <Route path='/' element={<GameListWrapper />} />
-        <Route path='/game' element={<GameListWrapper />} />
+        <Route path='/games' element={<GameListWrapper />} />
+        <Route path='/game' element={<GameWrapper />} />
       </Route>
     </Routes>
   );

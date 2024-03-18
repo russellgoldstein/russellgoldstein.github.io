@@ -32,7 +32,7 @@ export const gameApi = createApi({
       query: () => 'games',
     }),
     getGame: builder.query({
-      query: (gameCode) => `games?code=${gameCode}`,
+      query: (gameCode) => `games/${gameCode}`,
     }),
   }),
 });
