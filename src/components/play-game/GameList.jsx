@@ -27,6 +27,7 @@ export default function GameList() {
   if (error) return <div>Error: {error.message}</div>;
   return games && games.length > 0 ? (
     <div>
+      <NewGame setNewGame={setNewGame} />
       <Table columns={columns} data={games} />
     </div>
   ) : (

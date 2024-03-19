@@ -33,8 +33,32 @@ export const gameApi = createApi({
     getGame: builder.query({
       query: (gameCode) => `games/${gameCode}`,
     }),
+    patchGame: builder.mutation({
+      query: ({ gameCode, body }) => ({
+        url: `games/${gameCode}`,
+        method: 'PATCH',
+        body,
+      }),
+    }),
+    postLineup: builder.mutation({
+      query: ({ gameCode, body }) => ({
+        url: `games/${gameCode}/lineups`,
+        method: 'POST',
+        body,
+      }),
+    }),
+    getLineup: builder.query({
+      query: ({ gameCode }) => `games/${gameCode}/lineups`,
+    }),
   }),
 });
 
 // Export hooks for your endpoints here
-export const { useCreateGameMutation, useGetGamesQuery, useGetGameQuery } = gameApi;
+export const {
+  useCreateGameMutation,
+  useGetGamesQuery,
+  useGetGameQuery,
+  usePatchGameMutation,
+  usePostLineupMutation,
+  useGetLineupQuery,
+} = gameApi;

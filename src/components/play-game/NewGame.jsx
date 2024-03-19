@@ -15,7 +15,6 @@ export default function NewGame({ setNewGame }) {
       title,
       gameType,
     });
-    console.log(result);
     setNewGame(result.data);
   };
   return (
