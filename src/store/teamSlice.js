@@ -18,6 +18,8 @@ export const teamsSlice = createSlice({
   reducers: {
     setTeamHitters: (state, action) => {
       const { teamType, hitters } = action.payload;
+      console.log('teamType', teamType);
+      console.log('hitters', hitters);
       state.teams[teamType].hitters = hitters;
     },
     setTeamPitchers: (state, action) => {

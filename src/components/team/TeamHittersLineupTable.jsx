@@ -15,6 +15,7 @@ const advancedColumns = getAdvancedHitterColumns();
 
 export default function TeamHittersLineupTable({ statType, teamType }) {
   const lineup = useSelector((state) => state.teams.teams[teamType].hitters);
+  console.log('lineup in TeamHittersLineupTable', lineup);
   const selectedTeam = useSelector((state) => state.selectedTeam.team);
 
   const dispatch = useDispatch();

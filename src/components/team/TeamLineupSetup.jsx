@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { PrimaryButtonWithIcon } from '../global/PrimaryButtonWithIcon';
 import { Baseball } from '../icons/Baseball';
 import { TeamLineupTable } from './TeamLineupTable';
@@ -10,13 +10,14 @@ import { setTeamHitters } from '../../store/teamSlice';
 export default function TeamLineupSetup({ gameCode }) {
   const lineup = useSelector((state) => state.teams.teams['away'].hitters);
   const { data: savedLineup, error: lineupError, isLoading: lineupIsLoading } = useGetLineupQuery({ gameCode });
+  const dispatch = useDispatch();
   console.log('savedLineup', savedLineup);
   const [postLineup, { error, isLoading }] = usePostLineupMutation();
 
   useEffect(() => {
     if (savedLineup) {
       console.log('savedLineup', savedLineup);
-      setTeamHitters({ teamType: 'away', hitters: savedLineup });
+      dispatch(setTeamHitters({ teamType: 'away', hitters: savedLineup }));
     }
   }, [savedLineup]);
 
