@@ -9,6 +9,10 @@ export const gameApi = createApi({
       if (token) {
         headers.set('authorization', `Bearer ${token}`);
       }
+      const impostUserId = localStorage.getItem('impostUserId');
+      if (impostUserId) {
+        headers.set('x-user-id', impostUserId);
+      }
       // This is where you could set headers common to all requests
       return headers;
     },
