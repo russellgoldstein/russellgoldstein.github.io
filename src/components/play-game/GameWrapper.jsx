@@ -1,10 +1,10 @@
 import PageWrapper from '../partials/PageWrapper';
-import Game from './Game';
+import GameStatus from './GameStatus';
 
 export default function GameWrapper() {
   return (
     <PageWrapper>
-      <Game />
+      <GameStatus />
     </PageWrapper>
   );
 }

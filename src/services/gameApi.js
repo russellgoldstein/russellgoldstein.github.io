@@ -37,6 +37,9 @@ export const gameApi = createApi({
     getGame: builder.query({
       query: (gameCode) => `games/${gameCode}`,
     }),
+    getGameState: builder.query({
+      query: (gameCode) => `games/${gameCode}/state`,
+    }),
     patchGame: builder.mutation({
       query: ({ gameCode, body }) => ({
         url: `games/${gameCode}`,
@@ -65,4 +68,5 @@ export const {
   usePatchGameMutation,
   usePostLineupMutation,
   useGetLineupQuery,
+  useGetGameStateQuery,
 } = gameApi;

@@ -11,7 +11,6 @@ export default function NewGame({ setNewGame }) {
   const [gameType, setGameType] = useState('solo');
   const submitNewGame = async () => {
     const result = await createGame({
-      awayTeamId: 2,
       title,
       gameType,
     });
