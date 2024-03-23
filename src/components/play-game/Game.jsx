@@ -1,4 +1,4 @@
-import { useGetGameStateQuery } from '../../services/gameApi';
+import { useAdvanceGameMutation, useGetGameStateQuery } from '../../services/gameApi';
 import { PrimaryButtonWithIcon } from '../global/PrimaryButtonWithIcon';
 import { Baseball } from '../icons/Baseball';
 import GamePlayDisplay from '../matchup/GamePlayDisplay';
@@ -8,6 +8,8 @@ export default function Game() {
   const urlParams = new URLSearchParams(window.location.search);
   const gameCode = urlParams.get('code');
   const { data: game, error: gameError, isLoading: gameIsLoading } = useGetGameStateQuery(gameCode);
+
+  const [advanceGame, { error, isLoading }] = useAdvanceGameMutation();
 
   if (gameIsLoading) return <div>Loading...</div>;
   if (gameError) return <div>Error: {gameError.message}</div>;
@@ -37,8 +39,10 @@ export default function Game() {
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <PrimaryButtonWithIcon
           aria-controls='basic-modal'
-          onClick={(e) => {
-            claimAwayTeam();
+          onClick={async (e) => {
+            await advanceGame({
+              gameCode,
+            });
           }}
         >
           <Baseball />
