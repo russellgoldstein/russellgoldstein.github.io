@@ -54,6 +54,12 @@ export const gameApi = createApi({
         body,
       }),
     }),
+    startGame: builder.mutation({
+      query: ({ gameCode }) => ({
+        url: `games/${gameCode}/start`,
+        method: 'POST',
+      }),
+    }),
     getLineup: builder.query({
       query: ({ gameCode }) => `games/${gameCode}/lineups`,
     }),
@@ -69,4 +75,5 @@ export const {
   usePostLineupMutation,
   useGetLineupQuery,
   useGetGameStateQuery,
+  useStartGameMutation,
 } = gameApi;

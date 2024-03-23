@@ -1,4 +1,7 @@
 import { useGetGameStateQuery } from '../../services/gameApi';
+import { PrimaryButtonWithIcon } from '../global/PrimaryButtonWithIcon';
+import { Baseball } from '../icons/Baseball';
+import GamePlayDisplay from '../matchup/GamePlayDisplay';
 import { GameResults } from '../matchup/GameResults';
 
 export default function Game() {
@@ -8,14 +11,47 @@ export default function Game() {
 
   if (gameIsLoading) return <div>Loading...</div>;
   if (gameError) return <div>Error: {gameError.message}</div>;
+  const currentPitcherId = game.game.gameState.currentPitcherId;
+  const currentBatterId = game.game.gameState.currentBatterId;
+  const currentBatter =
+    game.awayBoxScore.hitters.find((hitter) => hitter.player.id === currentBatterId) ??
+    game.homeBoxScore.hitters.find((hitter) => hitter.player.id === currentBatterId);
+
+  const currentPitcher =
+    game.awayBoxScore.pitchers.find((pitcher) => pitcher.player.id === currentPitcherId) ??
+    game.homeBoxScore.pitchers.find((pitcher) => pitcher.player.id === currentPitcherId);
 
   return (
-    <GameResults
-      homeBoxScore={game.homeBoxScore}
-      awayBoxScore={game.awayBoxScore}
-      homeLinescore={[]}
-      awayLinescore={[]}
-      playByPlay={[]}
-    />
+    <>
+      <GamePlayDisplay
+        pitcherName={`${currentPitcher.player.first_name} ${currentPitcher.player.last_name}`}
+        batterName={`${currentBatter.player.first_name} ${currentBatter.player.last_name}`}
+        runners={game.game.gameState.baseRunners}
+        inning={game.game.gameState.inning}
+        outs={game.game.gameState.outs}
+        topOfInning={game.game.gameState.topOfInning}
+        awayScore={game.game.gameState.awayScore}
+        homeScore={game.game.gameState.homeScore}
+        playResult={game.playResult}
+      />
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <PrimaryButtonWithIcon
+          aria-controls='basic-modal'
+          onClick={(e) => {
+            claimAwayTeam();
+          }}
+        >
+          <Baseball />
+          <span className='ml-2'>Submit Plate Appearance</span>
+        </PrimaryButtonWithIcon>
+      </div>
+      <GameResults
+        homeBoxScore={game.homeBoxScore}
+        awayBoxScore={game.awayBoxScore}
+        homeLinescore={[]}
+        awayLinescore={[]}
+        playByPlay={[]}
+      />
+    </>
   );
 }

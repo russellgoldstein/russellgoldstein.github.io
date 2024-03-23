@@ -1,7 +1,6 @@
 import { useGetGameQuery, usePatchGameMutation } from '../../services/gameApi';
 import { PrimaryButtonWithIcon } from '../global/PrimaryButtonWithIcon';
 import { Baseball } from '../icons/Baseball';
-import { GameResults } from '../matchup/GameResults';
 import TeamLineupSetup from '../team/TeamLineupSetup';
 import Game from './Game';
 

@@ -45,19 +45,24 @@ const GamePlayDisplay = ({
         <div style={{ marginBottom: '10px' }}>
           <strong>Score:</strong> Away {awayScore} - Home {homeScore}
         </div>
-        <div style={{ marginBottom: '10px' }}>
-          <strong>Result:</strong> {playResult.result.result}
-        </div>
-        <div style={{ marginBottom: '10px' }}>
-          <strong>Hit Type:</strong> {playResult.result.type}
-        </div>
-        <div style={{ marginBottom: '10px' }}>
-          <strong>Hit Strength:</strong> {playResult.result.hitStrength}
-        </div>
-        {playResult.runnersScored?.length > 0 && (
-          <div>
-            <strong>Runners Scored:</strong> {playResult.runnersScored.map((runner) => runner.name).join(', ') || ''}
-          </div>
+        {playResult && (
+          <>
+            <div style={{ marginBottom: '10px' }}>
+              <strong>Result:</strong> {playResult.result.result}
+            </div>
+            <div style={{ marginBottom: '10px' }}>
+              <strong>Hit Type:</strong> {playResult.result.type}
+            </div>
+            <div style={{ marginBottom: '10px' }}>
+              <strong>Hit Strength:</strong> {playResult.result.hitStrength}
+            </div>
+            {playResult.runnersScored?.length > 0 && (
+              <div>
+                <strong>Runners Scored:</strong>{' '}
+                {playResult.runnersScored.map((runner) => runner.name).join(', ') || ''}
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
