@@ -31,7 +31,11 @@ const GamePlayDisplay = ({
       <BaseballDiamondSVG
         pitcherName={pitcherName}
         batterName={batterName}
-        runners={runners?.length > 0 ? runners.map((runner) => (runner !== null ? runner.name : '')) : []}
+        runners={
+          runners?.length > 0
+            ? runners.map((runner) => (runner !== undefined ? `${runner.first_name} ${runner.last_name}` : ''))
+            : []
+        }
       />
 
       {/* Right Column: Inning, Score, and Play Result */}

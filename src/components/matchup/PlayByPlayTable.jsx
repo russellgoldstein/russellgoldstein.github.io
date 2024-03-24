@@ -4,9 +4,9 @@ export const PlayByPlayTable = ({ plays }) => {
   return plays.length > 0 ? (
     plays.map((play, index) => (
       <GamePlayDisplay
-        pitcherName={play.gameState.pitcher.name}
-        batterName={play.gameState.batter.name}
-        runners={play.gameState.baseRunners}
+        pitcherName={`${play.gameState.pitcher.first_name} (${play.gameState.pitcher.last_name})`}
+        batterName={`${play.gameState.hitter.first_name} (${play.gameState.hitter.last_name})`}
+        runners={[play.gameState.runnerOn1st, play.gameState.runnerOn2nd, play.gameState.runnerOn3rd]}
         inning={play.gameState.inning}
         outs={play.gameState.outs}
         topOfInning={play.gameState.topOfInning}
