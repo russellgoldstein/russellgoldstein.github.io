@@ -54,7 +54,7 @@ const GamePlayDisplay = ({
               <strong>Hit Type:</strong> {playResult.result.type}
             </div>
             <div style={{ marginBottom: '10px' }}>
-              <strong>Hit Strength:</strong> {playResult.result.hitStrength}
+              <strong>Hit Strength:</strong> {playResult.result.hitQuality}
             </div>
             {playResult.runnersScored?.length > 0 && (
               <div>
