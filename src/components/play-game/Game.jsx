@@ -7,7 +7,7 @@ import { GameResults } from '../matchup/GameResults';
 export default function Game() {
   const urlParams = new URLSearchParams(window.location.search);
   const gameCode = urlParams.get('code');
-  const { data: game, error: gameError, isLoading: gameIsLoading } = useGetGameStateQuery(gameCode);
+  const { data: game, error: gameError, isLoading: gameIsLoading, refetch } = useGetGameStateQuery(gameCode);
 
   const [advanceGame, { error, isLoading }] = useAdvanceGameMutation();
 
@@ -43,6 +43,7 @@ export default function Game() {
             await advanceGame({
               gameCode,
             });
+            await refetch();
           }}
         >
           <Baseball />
