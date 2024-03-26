@@ -61,7 +61,7 @@ const GamePlayDisplay = ({
             {playResult.runnersScored?.length > 0 && (
               <div>
                 <strong>Runners Scored:</strong>{' '}
-                {playResult.runnersScored.map((runner) => runner.name).join(', ') || ''}
+                {playResult.runnersScored.map((runner) => `${runner.first_name} ${runner.last_name}`).join(', ') || ''}
               </div>
             )}
           </>

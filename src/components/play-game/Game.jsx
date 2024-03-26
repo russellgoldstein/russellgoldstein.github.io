@@ -25,6 +25,9 @@ export default function Game() {
     game.awayBoxScore.pitchers.find((pitcher) => pitcher.player.id === currentPitcherId) ??
     game.homeBoxScore.pitchers.find((pitcher) => pitcher.player.id === currentPitcherId);
 
+  console.log(game.game);
+  const awayLinescores = game.game.gameLineScores.filter((ls) => ls.topOfInning).sort((a, b) => a.inning - b.inning);
+  const homeLinescores = game.game.gameLineScores.filter((ls) => !ls.topOfInning).sort((a, b) => a.inning - b.inning);
   return (
     <>
       <GamePlayDisplay
@@ -60,9 +63,9 @@ export default function Game() {
       <GameResults
         homeBoxScore={game.homeBoxScore}
         awayBoxScore={game.awayBoxScore}
-        homeLinescore={[]}
-        awayLinescore={[]}
-        playByPlay={[]}
+        homeLinescore={homeLinescores}
+        awayLinescore={awayLinescores}
+        playByPlay={game.game.plateAppearances}
       />
     </>
   );
