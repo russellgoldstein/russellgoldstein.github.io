@@ -32,9 +32,7 @@ const GamePlayDisplay = ({
         pitcherName={pitcherName}
         batterName={batterName}
         runners={
-          runners?.length > 0
-            ? runners.map((runner) => (runner !== undefined ? `${runner.first_name} ${runner.last_name}` : ''))
-            : []
+          runners?.length > 0 ? runners.map((runner) => runner && `${runner.first_name} ${runner.last_name}`) : []
         }
       />
 
@@ -52,13 +50,13 @@ const GamePlayDisplay = ({
         {playResult && (
           <>
             <div style={{ marginBottom: '10px' }}>
-              <strong>Result:</strong> {playResult.result.result}
+              <strong>Result:</strong> {playResult.paOutcome?.description}
             </div>
             <div style={{ marginBottom: '10px' }}>
-              <strong>Hit Type:</strong> {playResult.result.type}
+              <strong>Hit Type:</strong> {playResult.battedBallOutcome?.description}
             </div>
             <div style={{ marginBottom: '10px' }}>
-              <strong>Hit Strength:</strong> {playResult.result.hitQuality}
+              <strong>Hit Strength:</strong> {playResult.hitQuality?.description}
             </div>
             {playResult.runnersScored?.length > 0 && (
               <div>

@@ -98,11 +98,18 @@ export const getBoxScorePitcherColumns = () => {
     //   header: 'SV',
     //   cell: (info) => info.renderValue(),
     // }),
-    columnHelper.accessor((row) => row.outs * 3, {
-      header: 'IP',
-      cell: (info) => info.renderValue(),
-      align: 'right',
-    }),
+    columnHelper.accessor(
+      (row) => {
+        const remainder = row.outs % 3;
+        const innings = Math.floor(row.outs / 3);
+        return `${innings.toFixed(0)}.${remainder}`;
+      },
+      {
+        header: 'IP',
+        cell: (info) => info.renderValue(),
+        align: 'right',
+      }
+    ),
     columnHelper.accessor('hits', {
       header: 'H',
       cell: (info) => info.renderValue(),

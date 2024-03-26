@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useAdvanceGameMutation, useGetGameStateQuery } from '../../services/gameApi';
 import { PrimaryButtonWithIcon } from '../global/PrimaryButtonWithIcon';
 import { Baseball } from '../icons/Baseball';
@@ -8,6 +9,7 @@ export default function Game() {
   const urlParams = new URLSearchParams(window.location.search);
   const gameCode = urlParams.get('code');
   const { data: game, error: gameError, isLoading: gameIsLoading, refetch } = useGetGameStateQuery(gameCode);
+  const [playResult, setPlayResult] = useState(null);
 
   const [advanceGame, { error, isLoading }] = useAdvanceGameMutation();
 
@@ -28,20 +30,25 @@ export default function Game() {
       <GamePlayDisplay
         pitcherName={`${currentPitcher.player.first_name} ${currentPitcher.player.last_name}`}
         batterName={`${currentBatter.player.first_name} ${currentBatter.player.last_name}`}
-        runners={game.game.gameState.baseRunners}
+        runners={[game.game.gameState.runnerOn1st, game.game.gameState.runnerOn2nd, game.game.gameState.runnerOn3rd]}
         inning={game.game.gameState.inning}
         outs={game.game.gameState.outs}
         topOfInning={game.game.gameState.topOfInning}
         awayScore={game.game.gameState.awayScore}
         homeScore={game.game.gameState.homeScore}
-        playResult={game.playResult}
+        playResult={playResult}
       />
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <PrimaryButtonWithIcon
           aria-controls='basic-modal'
           onClick={async (e) => {
-            await advanceGame({
+            const updatedPa = await advanceGame({
               gameCode,
+            });
+            setPlayResult({
+              battedBallOutcome: updatedPa.data.battedBallOutcome,
+              hitQuality: updatedPa.data.hitQuality,
+              paOutcome: updatedPa.data.paOutcome,
             });
             await refetch();
           }}
