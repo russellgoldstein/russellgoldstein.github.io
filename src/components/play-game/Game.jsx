@@ -25,7 +25,6 @@ export default function Game() {
     game.awayBoxScore.pitchers.find((pitcher) => pitcher.player.id === currentPitcherId) ??
     game.homeBoxScore.pitchers.find((pitcher) => pitcher.player.id === currentPitcherId);
 
-  console.log(game.game);
   const awayLinescores = game.game.gameLineScores.filter((ls) => ls.topOfInning).sort((a, b) => a.inning - b.inning);
   const homeLinescores = game.game.gameLineScores.filter((ls) => !ls.topOfInning).sort((a, b) => a.inning - b.inning);
   return (
@@ -42,23 +41,27 @@ export default function Game() {
         playResult={playResult}
       />
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <PrimaryButtonWithIcon
-          aria-controls='basic-modal'
-          onClick={async (e) => {
-            const updatedPa = await advanceGame({
-              gameCode,
-            });
-            setPlayResult({
-              battedBallOutcome: updatedPa.data.battedBallOutcome,
-              hitQuality: updatedPa.data.hitQuality,
-              paOutcome: updatedPa.data.paOutcome,
-            });
-            await refetch();
-          }}
-        >
-          <Baseball />
-          <span className='ml-2'>Submit Plate Appearance</span>
-        </PrimaryButtonWithIcon>
+        {game.game.gameStatus !== 'Final' ? (
+          <PrimaryButtonWithIcon
+            aria-controls='basic-modal'
+            onClick={async (e) => {
+              const updatedPa = await advanceGame({
+                gameCode,
+              });
+              setPlayResult({
+                battedBallOutcome: updatedPa.data.battedBallOutcome,
+                hitQuality: updatedPa.data.hitQuality,
+                paOutcome: updatedPa.data.paOutcome,
+              });
+              await refetch();
+            }}
+          >
+            <Baseball />
+            <span className='ml-2'>Submit Plate Appearance</span>
+          </PrimaryButtonWithIcon>
+        ) : (
+          'Game Over'
+        )}
       </div>
       <GameResults
         homeBoxScore={game.homeBoxScore}
