@@ -4,17 +4,18 @@ import { PrimaryButtonWithIcon } from '../global/PrimaryButtonWithIcon';
 import { Baseball } from '../icons/Baseball';
 import Modal from '../global/Modal';
 
-export default function NewGame({ setNewGame }) {
+export default function NewGame({ onNewGame }) {
   const [createGame, { error, isLoading }] = useCreateGameMutation();
   const [modalOpen, setModalOpen] = useState(false);
   const [title, setTitle] = useState('');
   const [gameType, setGameType] = useState('solo');
   const submitNewGame = async () => {
-    const result = await createGame({
+    await createGame({
       title,
       gameType,
     });
-    setNewGame(result.data);
+    onNewGame();
+    setModalOpen(false);
   };
   return (
     <div className='flex flex-container flex-col'>
@@ -25,6 +26,7 @@ export default function NewGame({ setNewGame }) {
             e.stopPropagation();
             setModalOpen(true);
           }}
+          disabled={isLoading}
         >
           <Baseball />
           <span className='ml-2'>Create New Game</span>
