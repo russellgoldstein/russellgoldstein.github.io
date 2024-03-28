@@ -4,12 +4,14 @@ import { PrimaryButtonWithIcon } from '../global/PrimaryButtonWithIcon';
 import { Baseball } from '../icons/Baseball';
 import GamePlayDisplay from '../matchup/GamePlayDisplay';
 import { GameResults } from '../matchup/GameResults';
+import { useGetCurrentUserQuery } from '../../services/simApi';
 
 export default function Game() {
   const urlParams = new URLSearchParams(window.location.search);
   const gameCode = urlParams.get('code');
   const { data: game, error: gameError, isLoading: gameIsLoading, refetch } = useGetGameStateQuery(gameCode);
   const [playResult, setPlayResult] = useState(null);
+  const { data: user, error: userError, isLoading: userIsLoading } = useGetCurrentUserQuery();
 
   const [advanceGame, { error, isLoading }] = useAdvanceGameMutation();
 
@@ -27,6 +29,7 @@ export default function Game() {
 
   const awayLinescores = game.game.gameLineScores.filter((ls) => ls.topOfInning).sort((a, b) => a.inning - b.inning);
   const homeLinescores = game.game.gameLineScores.filter((ls) => !ls.topOfInning).sort((a, b) => a.inning - b.inning);
+
   return (
     <>
       <GamePlayDisplay
