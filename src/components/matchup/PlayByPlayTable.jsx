@@ -17,11 +17,11 @@ export const PlayByPlayTable = ({ plays }) => {
       if (play.hitterScored) {
         runnersScored.push(play.hitter);
       }
-      console.log({ runnersScored });
+
       return (
         <GamePlayDisplay
-          pitcherName={`${play.pitcher.first_name} (${play.pitcher.last_name})`}
-          batterName={`${play.hitter.first_name} (${play.hitter.last_name})`}
+          pitcherName={`${play.pitcher.first_name} ${play.pitcher.last_name}`}
+          batterName={`${play.hitter.first_name} ${play.hitter.last_name}`}
           runners={[play.runnerOn1st, play.runnerOn2nd, play.runnerOn3rd]}
           inning={play.inning}
           outs={play.outs}

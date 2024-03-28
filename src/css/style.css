@@ -8,5 +8,6 @@
 @import 'additional-styles/flatpickr.css';
 @import 'additional-styles/table.css';
 @import 'additional-styles/flex.css';
+@import 'additional-styles/animations.css';
 
 @import 'tailwindcss/utilities';

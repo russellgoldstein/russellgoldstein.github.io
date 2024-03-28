@@ -68,8 +68,6 @@ export const Linescore = ({ homeLinescore, awayLinescore }) => {
     },
   ];
 
-  console.log({ data });
-  // Add the initial column for the category label ("Inning", "Away", "Home")
   const columns = [...inningColumns];
 
   return (

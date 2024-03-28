@@ -6,13 +6,14 @@ import TeamList from './TeamList';
 import { useGetLineupQuery, usePostLineupMutation } from '../../services/gameApi';
 import { useEffect } from 'react';
 import { setTeamHitters, setTeamPitchers } from '../../store/teamSlice';
+import { showToast } from '../../store/toastSlice';
 
 export default function TeamLineupSetup({ gameCode }) {
   const hittingLineup = useSelector((state) => state.teams.teams['away'].hitters);
   const pitchingLineup = useSelector((state) => state.teams.teams['away'].pitchers);
   const { data: savedLineup, error: lineupError, isLoading: lineupIsLoading } = useGetLineupQuery({ gameCode });
   const dispatch = useDispatch();
-  const [postLineup, { error, isLoading }] = usePostLineupMutation();
+  const [postLineup, { error, isLoading, isSuccess }] = usePostLineupMutation();
 
   useEffect(() => {
     if (savedLineup) {
@@ -30,6 +31,7 @@ export default function TeamLineupSetup({ gameCode }) {
       },
     };
     await postLineup({ gameCode, body });
+    dispatch(showToast({ message: 'Lineup saved successfully!', type: 'success' }));
   };
   return (
     <>

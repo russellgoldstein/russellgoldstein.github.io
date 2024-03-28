@@ -7,7 +7,6 @@ function AuthSuccess() {
 
   useEffect(() => {
     const hashParams = new URLSearchParams(location.hash.substring(1));
-    console.log({ hashParams });
     const accessToken = hashParams.get('token');
 
     if (accessToken) {

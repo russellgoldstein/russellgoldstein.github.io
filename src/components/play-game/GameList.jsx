@@ -1,4 +1,10 @@
-import { useGetGamesQuery, useStartGameMutation, usePatchGameMutation } from '../../services/gameApi';
+import {
+  useGetGamesQuery,
+  useStartGameMutation,
+  usePatchGameMutation,
+  useSimFullGameMutation,
+  useRestartGameMutation,
+} from '../../services/gameApi';
 import NewGame from './NewGame';
 import { createColumnHelper } from '@tanstack/react-table';
 import Table from '../global/Table';
@@ -10,7 +16,8 @@ export default function GameList() {
   const { data: games, error, isLoading, refetch } = useGetGamesQuery();
   const { data: user, error: userError, isLoading: userIsLoading } = useGetCurrentUserQuery();
   const [startGame, { error: startGameError, isLoading: startGameLoading }] = useStartGameMutation();
-
+  const [simFullGame, { error: simFullGameError, isLoading: simFullGameLoading }] = useSimFullGameMutation();
+  const [restartGame, { error: restartGameError, isLoading: restartGameLoading }] = useRestartGameMutation();
   const [patchGame, { error: isErrorPatchGame, isLoading: isLoadingPatchGame }] = usePatchGameMutation();
 
   if (isLoading) return <div>Loading...</div>;
@@ -21,7 +28,6 @@ export default function GameList() {
   if (isErrorPatchGame) return <div>Error: {isErrorPatchGame.message}</div>;
   if (userIsLoading) return <div>Loading...</div>;
   const claimAwayTeam = async (gameCode) => {
-    console.log('claim away team');
     await patchGame({
       gameCode,
       body: {
@@ -32,7 +38,6 @@ export default function GameList() {
   };
 
   const claimHomeTeam = async (gameCode) => {
-    console.log('claim home team');
     await patchGame({
       gameCode,
       body: {
@@ -64,10 +69,21 @@ export default function GameList() {
                 aria-controls='basic-modal'
                 onClick={async (e) => {
                   await startGame({ gameCode: row.gameCode });
+                  refetch();
                 }}
               >
                 <Baseball />
                 <span className='ml-2'>Start Game</span>
+              </PrimaryButtonWithIcon>
+              <PrimaryButtonWithIcon
+                aria-controls='basic-modal'
+                onClick={async (e) => {
+                  await simFullGame({ gameCode: row.gameCode });
+                  refetch();
+                }}
+              >
+                <Baseball />
+                <span className='ml-2'>Sim Full Game</span>
               </PrimaryButtonWithIcon>
             </>
           );
@@ -115,7 +131,23 @@ export default function GameList() {
           return 'Waiting for other team to claim...';
         }
         if (row.gameStatus === 'In Progress') {
-          return <a href={`http://${window.location.host}/game?code=${row.gameCode}`}>Resume</a>;
+          return (
+            <>
+              <a href={`http://${window.location.host}/game?code=${row.gameCode}`}>Resume</a>;
+              <>
+                <PrimaryButtonWithIcon
+                  aria-controls='basic-modal'
+                  onClick={(e) => {
+                    restartGame({ gameCode: row.gameCode });
+                    refetch();
+                  }}
+                >
+                  <Baseball />
+                  <span className='ml-2'>Restart Game</span>
+                </PrimaryButtonWithIcon>
+              </>
+            </>
+          );
         } else {
           return <a href={`http://${window.location.host}/game?code=${row.gameCode}`}>View</a>;
         }

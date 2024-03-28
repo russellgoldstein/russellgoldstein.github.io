@@ -60,6 +60,18 @@ export const gameApi = createApi({
         method: 'POST',
       }),
     }),
+    simFullGame: builder.mutation({
+      query: ({ gameCode }) => ({
+        url: `games/${gameCode}/sim`,
+        method: 'POST',
+      }),
+    }),
+    restartGame: builder.mutation({
+      query: ({ gameCode }) => ({
+        url: `games/${gameCode}/restart`,
+        method: 'POST',
+      }),
+    }),
     getLineup: builder.query({
       query: ({ gameCode }) => `games/${gameCode}/lineups`,
     }),
@@ -83,4 +95,6 @@ export const {
   useGetGameStateQuery,
   useStartGameMutation,
   useAdvanceGameMutation,
+  useSimFullGameMutation,
+  useRestartGameMutation,
 } = gameApi;

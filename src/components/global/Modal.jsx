@@ -2,14 +2,12 @@ import React, { useRef, useEffect } from 'react';
 import Transition from '../../utils/Transition';
 
 export default function Modal({ children, id, title, modalOpen, setModalOpen }) {
-  console.log(modalOpen);
   const modalContent = useRef(null);
 
   // close on click outside
   useEffect(() => {
     const clickHandler = ({ target }) => {
       if (!modalOpen || modalContent.current.contains(target)) return;
-      console.log('click outside');
       setModalOpen(false);
     };
     document.addEventListener('click', clickHandler);
@@ -20,7 +18,6 @@ export default function Modal({ children, id, title, modalOpen, setModalOpen }) 
   useEffect(() => {
     const keyHandler = ({ keyCode }) => {
       if (!modalOpen || keyCode !== 27) return;
-      console.log('esc key pressed');
       setModalOpen(false);
     };
     document.addEventListener('keydown', keyHandler);

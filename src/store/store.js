@@ -7,6 +7,7 @@ import teamsReducer from './teamSlice';
 import availablePlayersReducer from './availablePlayersSlice';
 import selectedTeamReducer from './selectedTeamSlice';
 import { simApi } from '../services/simApi';
+import toastReducer from './toastSlice';
 
 export const store = configureStore({
   reducer: {
@@ -17,6 +18,7 @@ export const store = configureStore({
     teams: teamsReducer,
     availablePlayers: availablePlayersReducer,
     selectedTeam: selectedTeamReducer,
+    toast: toastReducer,
   },
   // Adding the api middleware enables caching, invalidation, polling, and other features of RTK Query
   middleware: (getDefaultMiddleware) =>
