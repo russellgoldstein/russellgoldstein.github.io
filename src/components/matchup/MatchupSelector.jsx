@@ -7,7 +7,6 @@ import { SimMatchup } from './SimMatchup';
 import { GameResults } from './GameResults';
 import { TeamLineupTable } from '../team/TeamLineupTable';
 import TeamList from '../team/TeamList';
-import PageWrapper from '../partials/PageWrapper';
 
 export default function MatchupSelector() {
   const [homeBoxScore, setHomeBoxScore] = useState([]);
@@ -38,7 +37,7 @@ export default function MatchupSelector() {
   }, []);
 
   return (
-    <PageWrapper>
+    <>
       <SimMatchup
         setPlayByPlay={setPlayByPlay}
         setHomeLinescore={setHomeLinescore}
@@ -92,6 +91,6 @@ export default function MatchupSelector() {
           </div>
         </>
       )}
-    </PageWrapper>
+    </>
   );
 }

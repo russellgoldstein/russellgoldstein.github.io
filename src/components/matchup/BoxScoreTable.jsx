@@ -5,7 +5,6 @@ import { getBoxScoreHitterColumns, getBoxScorePitcherColumns } from '../../utils
 const hitterBoxScoreColumns = getBoxScoreHitterColumns();
 const pitcherBoxScoreColumns = getBoxScorePitcherColumns();
 export default function BoxScoreTable({ hitterBoxScore, pitcherBoxScore }) {
-  console.log('hitterBoxScore', hitterBoxScore);
   return (
     <div className='flex flex-col gap-4'>
       <div className='table-container w-full'>

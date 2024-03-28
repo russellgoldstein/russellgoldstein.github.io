@@ -6,8 +6,11 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import LoginPage from './components/LoginPage';
 import './css/style.css';
 import './charts/ChartjsConfig';
-import MatchupSelector from './components/matchup/MatchupSelector';
+import MatchupSelectorPageWrapper from './components/matchup/MatchupSelectorPageWrapper';
 import PlayerSim from './components/player-sim/PlayerSim';
+import GameListWrapper from './components/play-game/GameListWrapper';
+import GameWrapper from './components/play-game/GameWrapper';
+import ToastContainer from './components/global/ToastContainer';
 
 function App() {
   const location = useLocation();
@@ -18,14 +21,20 @@ function App() {
     document.querySelector('html').style.scrollBehavior = '';
   }, [location.pathname]); // triggered on route change
   return (
-    <Routes>
-      <Route path='/login' element={<LoginPage />} />
-      <Route path='/auth/success' element={<AuthSuccess />} />
-      <Route element={<ProtectedRoute />}>
-        <Route path='/' element={<MatchupSelector />} />
-        <Route path='/player-sim' element={<PlayerSim />} />
-      </Route>
-    </Routes>
+    <>
+      <Routes>
+        <Route path='/login' element={<LoginPage />} />
+        <Route path='/auth/success' element={<AuthSuccess />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path='/sim' element={<MatchupSelectorPageWrapper />} />
+          <Route path='/sim/players' element={<PlayerSim />} />
+          <Route path='/' element={<GameListWrapper />} />
+          <Route path='/games' element={<GameListWrapper />} />
+          <Route path='/game' element={<GameWrapper />} />
+        </Route>
+      </Routes>
+      <ToastContainer />
+    </>
   );
 }
 

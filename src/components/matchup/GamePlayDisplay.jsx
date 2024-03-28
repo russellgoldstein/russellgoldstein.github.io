@@ -31,7 +31,9 @@ const GamePlayDisplay = ({
       <BaseballDiamondSVG
         pitcherName={pitcherName}
         batterName={batterName}
-        runners={runners?.length > 0 ? runners.map((runner) => (runner !== null ? runner.name : '')) : []}
+        runners={
+          runners?.length > 0 ? runners.map((runner) => runner && `${runner.first_name} ${runner.last_name}`) : []
+        }
       />
 
       {/* Right Column: Inning, Score, and Play Result */}
@@ -45,19 +47,24 @@ const GamePlayDisplay = ({
         <div style={{ marginBottom: '10px' }}>
           <strong>Score:</strong> Away {awayScore} - Home {homeScore}
         </div>
-        <div style={{ marginBottom: '10px' }}>
-          <strong>Result:</strong> {playResult.result.result}
-        </div>
-        <div style={{ marginBottom: '10px' }}>
-          <strong>Hit Type:</strong> {playResult.result.type}
-        </div>
-        <div style={{ marginBottom: '10px' }}>
-          <strong>Hit Strength:</strong> {playResult.result.hitStrength}
-        </div>
-        {playResult.runnersScored?.length > 0 && (
-          <div>
-            <strong>Runners Scored:</strong> {playResult.runnersScored.map((runner) => runner.name).join(', ') || ''}
-          </div>
+        {playResult && (
+          <>
+            <div style={{ marginBottom: '10px' }}>
+              <strong>Result:</strong> {playResult.paOutcome?.description}
+            </div>
+            <div style={{ marginBottom: '10px' }}>
+              <strong>Hit Type:</strong> {playResult.battedBallOutcome?.description}
+            </div>
+            <div style={{ marginBottom: '10px' }}>
+              <strong>Hit Strength:</strong> {playResult.hitQuality?.description}
+            </div>
+            {playResult.runnersScored?.length > 0 && (
+              <div>
+                <strong>Runners Scored:</strong>{' '}
+                {playResult.runnersScored.map((runner) => `${runner.first_name} ${runner.last_name}`).join(', ') || ''}
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

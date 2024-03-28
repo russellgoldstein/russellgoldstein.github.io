@@ -2,13 +2,13 @@ import React from 'react';
 
 const OutcomeSliders = ({ outcomePercents, setOutcomePercents }) => {
   // Function to handle slider changes
-  const handleChange = (hitType, hitStrength, outcome, value) => {
+  const handleChange = (hitType, hitQuality, outcome, value) => {
     setOutcomePercents((prev) => ({
       ...prev,
       [hitType]: {
         ...prev[hitType],
-        [hitStrength]: {
-          ...prev[hitType][hitStrength],
+        [hitQuality]: {
+          ...prev[hitType][hitQuality],
           [outcome]: Number(value),
         },
       },

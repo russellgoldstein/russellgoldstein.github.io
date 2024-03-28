@@ -4,9 +4,11 @@ export const getBoxScoreHitterColumns = () => {
   const columnHelper = createColumnHelper();
 
   const columns = [
-    columnHelper.accessor('player.name', {
-      header: 'Name',
-      cell: (info) => info.getValue(),
+    columnHelper.accessor((row) => (row.player ? `${row.player?.first_name} ${row.player?.last_name}` : '--'), {
+      id: 'name', // It's important to provide an id for custom accessors
+      header: () => 'Name',
+      cell: (info) => <span>{info.getValue()}</span>,
+      sticky: 'left', // Apply sticky if needed
     }),
     columnHelper.accessor('atBats', {
       header: 'AB',
@@ -66,9 +68,11 @@ export const getBoxScorePitcherColumns = () => {
   const columnHelper = createColumnHelper();
 
   const columns = [
-    columnHelper.accessor('name', {
-      header: 'Name',
-      cell: (info) => info.getValue(),
+    columnHelper.accessor((row) => (row.player ? `${row.player?.first_name} ${row.player?.last_name}` : '--'), {
+      id: 'name', // It's important to provide an id for custom accessors
+      header: () => 'Name',
+      cell: (info) => <span>{info.getValue()}</span>,
+      sticky: 'left', // Apply sticky if needed
     }),
     // columnHelper.accessor('wins', {
     //   header: 'W',
@@ -94,17 +98,24 @@ export const getBoxScorePitcherColumns = () => {
     //   header: 'SV',
     //   cell: (info) => info.renderValue(),
     // }),
-    columnHelper.accessor('IP', {
-      header: 'IP',
-      cell: (info) => info.renderValue(),
-      align: 'right',
-    }),
-    columnHelper.accessor('H', {
+    columnHelper.accessor(
+      (row) => {
+        const remainder = row.outs % 3;
+        const innings = Math.floor(row.outs / 3);
+        return `${innings.toFixed(0)}.${remainder}`;
+      },
+      {
+        header: 'IP',
+        cell: (info) => info.renderValue(),
+        align: 'right',
+      }
+    ),
+    columnHelper.accessor('hits', {
       header: 'H',
       cell: (info) => info.renderValue(),
       align: 'right',
     }),
-    columnHelper.accessor('R', {
+    columnHelper.accessor('runs', {
       header: 'R',
       cell: (info) => info.renderValue(),
       align: 'right',
@@ -117,12 +128,12 @@ export const getBoxScorePitcherColumns = () => {
     //   header: 'HR',
     //   cell: (info) => info.renderValue(),
     // }),
-    columnHelper.accessor('BB', {
+    columnHelper.accessor('walks', {
       header: 'BB',
       cell: (info) => info.renderValue(),
       align: 'right',
     }),
-    columnHelper.accessor('SO', {
+    columnHelper.accessor('strikeouts', {
       header: 'SO',
       cell: (info) => info.renderValue(),
       align: 'right',

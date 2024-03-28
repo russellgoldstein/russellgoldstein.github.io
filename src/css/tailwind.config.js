@@ -52,6 +52,20 @@ export default {
       zIndex: {
         60: '60',
       },
+      keyframes: {
+        slideIn: {
+          '0%': { transform: 'translateY(100%)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        fadeOut: {
+          '0%': { opacity: '1' },
+          '100%': { opacity: '0' },
+        },
+      },
+      animation: {
+        slideIn: 'slideIn 0.5s forwards',
+        fadeOut: 'fadeOut 0.5s forwards',
+      },
     },
   },
   plugins: [
