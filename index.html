@@ -14,11 +14,31 @@
         document.querySelector('html').style.colorScheme = 'light';
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-aNs1z-oU.js"></script>
+    <script type="module" crossorigin src="/assets/index-DvKKqIHZ.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-Dtsi_vIt.css">
   </head>
   <body class="font-inter antialiased bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400">
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        if (window.location.pathname !== '/') {
+          // Save the URL path
+          window.localStorage.setItem(
+            'redirectPath',
+            window.location.pathname + window.location.search + window.location.hash
+          );
+          // Redirect to the root URL
+          window.location.replace('/');
+        } else {
+          // Check for a saved path in localStorage
+          const redirectPath = window.localStorage.getItem('redirectPath');
+          if (redirectPath) {
+            window.localStorage.removeItem('redirectPath'); // Clean up
+            window.history.replaceState(null, '', redirectPath); // Replace the current entry in the history stack
+          }
+        }
+      });
+    </script>
     <script>
       if (localStorage.getItem('sidebar-expanded') == 'true') {
         document.querySelector('body').classList.add('sidebar-expanded');
