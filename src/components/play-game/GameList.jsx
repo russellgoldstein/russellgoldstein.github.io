@@ -11,6 +11,7 @@ import Table from '../global/Table';
 import { PrimaryButtonWithIcon } from '../global/PrimaryButtonWithIcon';
 import { Baseball } from '../icons/Baseball';
 import { useGetCurrentUserQuery } from '../../services/simApi';
+import Link from '../global/Link';
 
 export default function GameList() {
   const { data: games, error, isLoading, refetch } = useGetGamesQuery();
@@ -50,7 +51,14 @@ export default function GameList() {
   const columnHelper = createColumnHelper();
   const columns = [
     columnHelper.accessor(
-      (row) => <a href={`http://${window.location.host}/game?code=${row.gameCode}`}>{row.title}</a>,
+      (row) => (
+        <Link
+          href={`http://${window.location.host}/game?code=${row.gameCode}`}
+          disabled={!row.homeTeamId || !row.awayTeamId}
+        >
+          {row.title}
+        </Link>
+      ),
       {
         header: 'Title',
         cell: (info) => info.renderValue(),
@@ -135,23 +143,18 @@ export default function GameList() {
         if (row.gameStatus === 'In Progress') {
           return (
             <>
-              <a href={`http://${window.location.host}/game?code=${row.gameCode}`}>Resume</a>;
-              <>
-                <PrimaryButtonWithIcon
-                  aria-controls='basic-modal'
-                  onClick={(e) => {
-                    restartGame({ gameCode: row.gameCode });
-                    refetch();
-                  }}
-                >
-                  <Baseball />
-                  <span className='ml-2'>Restart Game</span>
-                </PrimaryButtonWithIcon>
-              </>
+              <PrimaryButtonWithIcon
+                aria-controls='basic-modal'
+                onClick={(e) => {
+                  restartGame({ gameCode: row.gameCode });
+                  refetch();
+                }}
+              >
+                <Baseball />
+                <span className='ml-2'>Restart Game</span>
+              </PrimaryButtonWithIcon>
             </>
           );
-        } else {
-          return <a href={`http://${window.location.host}/game?code=${row.gameCode}`}>View</a>;
         }
       },
       { header: 'Actions', cell: (info) => info.renderValue() }

@@ -30,6 +30,17 @@ export default function Game() {
   const awayLinescores = game.game.gameLineScores.filter((ls) => ls.topOfInning).sort((a, b) => a.inning - b.inning);
   const homeLinescores = game.game.gameLineScores.filter((ls) => !ls.topOfInning).sort((a, b) => a.inning - b.inning);
 
+  const currentPlateAppearance = game.game.plateAppearances.find(
+    (pa) => pa.id === game.game.gameState.currentPlateAppearanceId
+  );
+
+  const waitingForOtherTeam =
+    (currentPlateAppearance.hittingTeam.userId === user.id &&
+      currentPlateAppearance.hittingTeamReady &&
+      !currentPlateAppearance.pitchingTeamReady) ||
+    (currentPlateAppearance.pitchingTeam.userId === user.id &&
+      currentPlateAppearance.pitchingTeamReady &&
+      !currentPlateAppearance.hittingTeamReady);
   return (
     <>
       <GamePlayDisplay
@@ -45,23 +56,27 @@ export default function Game() {
       />
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         {game.game.gameStatus !== 'Final' ? (
-          <PrimaryButtonWithIcon
-            aria-controls='basic-modal'
-            onClick={async (e) => {
-              const updatedPa = await advanceGame({
-                gameCode,
-              });
-              setPlayResult({
-                battedBallOutcome: updatedPa.data.battedBallOutcome,
-                hitQuality: updatedPa.data.hitQuality,
-                paOutcome: updatedPa.data.paOutcome,
-              });
-              await refetch();
-            }}
-          >
-            <Baseball />
-            <span className='ml-2'>Submit Plate Appearance</span>
-          </PrimaryButtonWithIcon>
+          !waitingForOtherTeam ? (
+            <PrimaryButtonWithIcon
+              aria-controls='basic-modal'
+              onClick={async (e) => {
+                const updatedPa = await advanceGame({
+                  gameCode,
+                });
+                setPlayResult({
+                  battedBallOutcome: updatedPa.data.battedBallOutcome,
+                  hitQuality: updatedPa.data.hitQuality,
+                  paOutcome: updatedPa.data.paOutcome,
+                });
+                await refetch();
+              }}
+            >
+              <Baseball />
+              <span className='ml-2'>Submit Plate Appearance</span>
+            </PrimaryButtonWithIcon>
+          ) : (
+            <div>Waiting for other team</div>
+          )
         ) : (
           'Game Over'
         )}

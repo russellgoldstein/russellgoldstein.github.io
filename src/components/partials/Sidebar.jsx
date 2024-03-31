@@ -174,20 +174,6 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                           <li className='mb-1 last:mb-0'>
                             <NavLink
                               end
-                              to='/sim'
-                              className={({ isActive }) =>
-                                'block transition duration-150 truncate ' +
-                                (isActive ? 'text-indigo-500' : 'text-slate-400 hover:text-slate-200')
-                              }
-                            >
-                              <span className='text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200'>
-                                Game Simulation
-                              </span>
-                            </NavLink>
-                          </li>
-                          <li className='mb-1 last:mb-0'>
-                            <NavLink
-                              end
                               to='/sim/players'
                               className={({ isActive }) =>
                                 'block transition duration-150 truncate ' +
@@ -256,28 +242,14 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                           <li className='mb-1 last:mb-0'>
                             <NavLink
                               end
-                              to='/game/new'
+                              to='/games'
                               className={({ isActive }) =>
                                 'block transition duration-150 truncate ' +
                                 (isActive ? 'text-indigo-500' : 'text-slate-400 hover:text-slate-200')
                               }
                             >
                               <span className='text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200'>
-                                New Game
-                              </span>
-                            </NavLink>
-                          </li>
-                          <li className='mb-1 last:mb-0'>
-                            <NavLink
-                              end
-                              to='/game'
-                              className={({ isActive }) =>
-                                'block transition duration-150 truncate ' +
-                                (isActive ? 'text-indigo-500' : 'text-slate-400 hover:text-slate-200')
-                              }
-                            >
-                              <span className='text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200'>
-                                Continue Game
+                                Games List
                               </span>
                             </NavLink>
                           </li>
