@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import BaseballDiamondSVG from '../icons/BaseballDiamond';
 import { formatPlayResultText } from '../../utils/Utils';
 
-const GamePlayDisplay = ({ plateAppearance, runnersScored }) => {
+const GamePlayDisplay = ({ plateAppearance, runnersScored, updatedResult = false }) => {
   const pitcherName = `${plateAppearance.pitcher.first_name} ${plateAppearance.pitcher.last_name}`;
   const hitterName = `${plateAppearance.hitter.first_name} ${plateAppearance.hitter.last_name}`;
   const runners = [plateAppearance.runnerOn1st, plateAppearance.runnerOn2nd, plateAppearance.runnerOn3rd];
@@ -12,20 +12,23 @@ const GamePlayDisplay = ({ plateAppearance, runnersScored }) => {
     hitQuality: plateAppearance.hitQuality,
     runnersScored: runnersScored,
   };
+  // State to control the flash effect
+  const [flash, setFlash] = useState(false);
+
+  useEffect(() => {
+    if (updatedResult) {
+      setFlash(true);
+      const timer = setTimeout(() => {
+        setFlash(false);
+      }, 1000); // Flash for 1 second
+      return () => clearTimeout(timer);
+    }
+  }, [updatedResult]);
   return (
     <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'auto 1fr',
-        gap: '20px',
-        alignItems: 'start',
-        border: '2px solid #ccc',
-        borderRadius: '8px',
-        padding: '20px',
-        maxWidth: '500px',
-        margin: '20px auto',
-        backgroundColor: '#f9f9f9',
-      }}
+      className={`grid grid-cols-[auto_1fr] gap-5 items-start border-2 border-gray-300 rounded-lg p-5 max-w-md mx-auto ${
+        flash ? 'bg-yellow-100 animate-flash' : 'bg-gray-50'
+      }`}
     >
       {/* Baseball Diamond SVG */}
       <BaseballDiamondSVG

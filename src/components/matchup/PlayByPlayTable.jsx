@@ -3,7 +3,6 @@ import GamePlayDisplay from './GamePlayDisplay';
 export const PlayByPlayTable = ({ plays }) => {
   return plays.length > 0 ? (
     plays.map((play, index) => {
-      console.log({ play });
       const runnersScored = [];
       if (play.runnerOn1stScored) {
         runnersScored.push(play.runnerOn1st);

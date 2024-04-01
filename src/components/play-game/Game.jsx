@@ -17,8 +17,19 @@ export default function Game() {
   const { data: user, error: userError, isLoading: userIsLoading } = useGetCurrentUserQuery();
   const [nextPlateAppearance, setNextPlateAppearance] = useState(null);
   const [currentPlateAppearance, setCurrentPlateAppearance] = useState(null);
+  const [updatedResult, setUpdatedResult] = useState(false);
 
   const [advanceGame, { error, isLoading }] = useAdvanceGameMutation();
+
+  useEffect(() => {
+    // Setting up an interval to refetch the game state every 10 seconds
+    const interval = setInterval(() => {
+      refetch();
+    }, 10000);
+
+    // Clearing the interval when the component unmounts
+    return () => clearInterval(interval);
+  }, [refetch]);
 
   useEffect(() => {
     if (game && !nextPlateAppearance) {
@@ -38,8 +49,21 @@ export default function Game() {
         hitQuality: plateAppearance.hitQuality,
         paOutcome: plateAppearance.paOutcome,
       });
+      console.log({ nextPlateAppearance, plateAppearance });
       setCurrentPlateAppearance(plateAppearance);
-      setNextPlateAppearance(nextPlateAppearance);
+      if (nextPlateAppearance) {
+        console.log('Setting updated result');
+        setUpdatedResult(true);
+      }
+      setTimeout(() => {
+        // Reset updatedResult back to false after the flash duration
+        setUpdatedResult(false);
+
+        // Now update the currentPlateAppearance and nextPlateAppearance
+        // This delay ensures the user sees the flash before any new data changes
+
+        setNextPlateAppearance(nextPlateAppearance);
+      }, 2000);
       await refetch();
     }
   };
@@ -69,13 +93,16 @@ export default function Game() {
         pa.id !== displayedPlateAppearance?.id
     )
     .sort((a, b) => b.id - a.id);
+  console.log({ displayedPlateAppearance });
   return (
     <div className='flex flex-col space-y-4'>
       <Linescore homeLinescore={homeLinescores} awayLinescore={awayLinescores} />
 
       <div className='flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4'>
         <div className='flex-1'>
-          {displayedPlateAppearance && <GamePlayDisplay plateAppearance={displayedPlateAppearance} />}
+          {displayedPlateAppearance && (
+            <GamePlayDisplay plateAppearance={displayedPlateAppearance} updatedResult={updatedResult} />
+          )}
         </div>
         <div>
           {game.game.gameStatus !== 'Final' ? (

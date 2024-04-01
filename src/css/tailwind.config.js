@@ -61,10 +61,15 @@ export default {
           '0%': { opacity: '1' },
           '100%': { opacity: '0' },
         },
+        flash: {
+          '0%, 100%': { backgroundColor: 'transparent' },
+          '50%': { backgroundColor: '#fefcbf' }, // Temporary flash color
+        },
       },
       animation: {
         slideIn: 'slideIn 0.5s forwards',
         fadeOut: 'fadeOut 0.5s forwards',
+        flash: 'flash 1s ease-in-out',
       },
     },
   },
