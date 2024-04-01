@@ -2,7 +2,7 @@ import React from 'react';
 
 const BaseballDiamondSVG = ({
   pitcherName = 'Pitcher Name',
-  batterName = 'Batter Name',
+  hitterName = 'Hitter Name',
   runners = [null, null, null],
 }) => {
   return (
@@ -21,7 +21,7 @@ const BaseballDiamondSVG = ({
         {pitcherName}
       </text>
       <text x='100' y='195' textAnchor='middle' fill='black' fontSize='11' fontFamily='Arial'>
-        {batterName}
+        {hitterName}
       </text>
       {runners[0] && (
         <text x='180' y='110' textAnchor='middle' fill='black' fontSize='11' fontFamily='Arial'>

@@ -1,17 +1,17 @@
 import React from 'react';
 import BaseballDiamondSVG from '../icons/BaseballDiamond';
+import { formatPlayResultText } from '../../utils/Utils';
 
-const GamePlayDisplay = ({
-  pitcherName,
-  batterName,
-  runners,
-  inning,
-  outs,
-  topOfInning,
-  awayScore,
-  homeScore,
-  playResult,
-}) => {
+const GamePlayDisplay = ({ plateAppearance, runnersScored }) => {
+  const pitcherName = `${plateAppearance.pitcher.first_name} ${plateAppearance.pitcher.last_name}`;
+  const hitterName = `${plateAppearance.hitter.first_name} ${plateAppearance.hitter.last_name}`;
+  const runners = [plateAppearance.runnerOn1st, plateAppearance.runnerOn2nd, plateAppearance.runnerOn3rd];
+  const playResult = {
+    paOutcome: plateAppearance.paOutcome,
+    battedBallOutcome: plateAppearance.battedBallOutcome,
+    hitQuality: plateAppearance.hitQuality,
+    runnersScored: runnersScored,
+  };
   return (
     <div
       style={{
@@ -22,7 +22,7 @@ const GamePlayDisplay = ({
         border: '2px solid #ccc',
         borderRadius: '8px',
         padding: '20px',
-        maxWidth: '800px',
+        maxWidth: '500px',
         margin: '20px auto',
         backgroundColor: '#f9f9f9',
       }}
@@ -30,42 +30,40 @@ const GamePlayDisplay = ({
       {/* Baseball Diamond SVG */}
       <BaseballDiamondSVG
         pitcherName={pitcherName}
-        batterName={batterName}
+        hitterName={hitterName}
         runners={
           runners?.length > 0 ? runners.map((runner) => runner && `${runner.first_name} ${runner.last_name}`) : []
         }
       />
 
-      {/* Right Column: Inning, Score, and Play Result */}
       <div>
         <div style={{ marginBottom: '10px' }}>
-          <strong>Inning:</strong> {topOfInning ? 'Top' : 'Bottom'} {inning}
+          <strong>Outs:</strong> {plateAppearance.outs}
         </div>
         <div style={{ marginBottom: '10px' }}>
-          <strong>Outs:</strong> {outs}
+          <strong>Score:</strong> Away {plateAppearance.awayScore} - Home {plateAppearance.homeScore}
         </div>
-        <div style={{ marginBottom: '10px' }}>
-          <strong>Score:</strong> Away {awayScore} - Home {homeScore}
-        </div>
-        {playResult && (
-          <>
-            <div style={{ marginBottom: '10px' }}>
-              <strong>Result:</strong> {playResult.paOutcome?.description}
-            </div>
-            <div style={{ marginBottom: '10px' }}>
-              <strong>Hit Type:</strong> {playResult.battedBallOutcome?.description}
-            </div>
-            <div style={{ marginBottom: '10px' }}>
-              <strong>Hit Strength:</strong> {playResult.hitQuality?.description}
-            </div>
-            {playResult.runnersScored?.length > 0 && (
-              <div>
-                <strong>Runners Scored:</strong>{' '}
-                {playResult.runnersScored.map((runner) => `${runner.first_name} ${runner.last_name}`).join(', ') || ''}
-              </div>
-            )}
-          </>
+      </div>
+
+      <div>
+        <strong>Pitcher</strong>
+        {plateAppearance.pitcher && (
+          <div>
+            {plateAppearance.pitcher.first_name} {plateAppearance.pitcher.last_name}
+          </div>
         )}
+        <strong>Hitter</strong>
+        {plateAppearance.hitter && (
+          <div>
+            {plateAppearance.hitter.first_name} {plateAppearance.hitter.last_name}
+          </div>
+        )}
+      </div>
+
+      {/* Right Column: Inning, Score, and Play Result */}
+      <div>
+        <strong>Result</strong>
+        {playResult && <div>{formatPlayResultText({ playResult, hitter: plateAppearance.hitter })}</div>}
       </div>
     </div>
   );

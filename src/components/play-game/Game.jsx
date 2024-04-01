@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAdvanceGameMutation, useGetGameStateQuery } from '../../services/gameApi';
 import { PrimaryButtonWithIcon } from '../global/PrimaryButtonWithIcon';
 import { Baseball } from '../icons/Baseball';
 import GamePlayDisplay from '../matchup/GamePlayDisplay';
-import { GameResults } from '../matchup/GameResults';
 import { useGetCurrentUserQuery } from '../../services/simApi';
+import { Linescore } from '../matchup/Linescore';
+import { GameBoxScoreTabs } from '../matchup/GameBoxScoreTabs';
+import PlayByPlayTable from '../matchup/PlayByPlayTable';
+import { formatInningText } from '../../utils/Utils';
 
 export default function Game() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -12,82 +15,100 @@ export default function Game() {
   const { data: game, error: gameError, isLoading: gameIsLoading, refetch } = useGetGameStateQuery(gameCode);
   const [playResult, setPlayResult] = useState(null);
   const { data: user, error: userError, isLoading: userIsLoading } = useGetCurrentUserQuery();
+  const [nextPlateAppearance, setNextPlateAppearance] = useState(null);
+  const [currentPlateAppearance, setCurrentPlateAppearance] = useState(null);
 
   const [advanceGame, { error, isLoading }] = useAdvanceGameMutation();
 
+  useEffect(() => {
+    if (game && !nextPlateAppearance) {
+      const initialPlateAppearance = game.game.plateAppearances.find(
+        (pa) => pa.id === game.game.gameState.currentPlateAppearanceId
+      );
+      setCurrentPlateAppearance(initialPlateAppearance);
+    }
+  }, [game, nextPlateAppearance]);
+
+  const handleAdvanceGame = async () => {
+    const { data } = await advanceGame({ gameCode });
+    if (data) {
+      const { plateAppearance, nextPlateAppearance } = data;
+      setPlayResult({
+        battedBallOutcome: plateAppearance.battedBallOutcome,
+        hitQuality: plateAppearance.hitQuality,
+        paOutcome: plateAppearance.paOutcome,
+      });
+      setCurrentPlateAppearance(plateAppearance);
+      setNextPlateAppearance(nextPlateAppearance);
+      await refetch();
+    }
+  };
+
   if (gameIsLoading) return <div>Loading...</div>;
   if (gameError) return <div>Error: {gameError.message}</div>;
-  const currentPitcherId = game.game.gameState.currentPitcherId;
-  const currentBatterId = game.game.gameState.currentBatterId;
-  const currentBatter =
-    game.awayBoxScore.hitters.find((hitter) => hitter.player.id === currentBatterId) ??
-    game.homeBoxScore.hitters.find((hitter) => hitter.player.id === currentBatterId);
-
-  const currentPitcher =
-    game.awayBoxScore.pitchers.find((pitcher) => pitcher.player.id === currentPitcherId) ??
-    game.homeBoxScore.pitchers.find((pitcher) => pitcher.player.id === currentPitcherId);
 
   const awayLinescores = game.game.gameLineScores.filter((ls) => ls.topOfInning).sort((a, b) => a.inning - b.inning);
   const homeLinescores = game.game.gameLineScores.filter((ls) => !ls.topOfInning).sort((a, b) => a.inning - b.inning);
 
-  const currentPlateAppearance = game.game.plateAppearances.find(
-    (pa) => pa.id === game.game.gameState.currentPlateAppearanceId
-  );
-
   const waitingForOtherTeam =
-    (currentPlateAppearance.hittingTeam.userId === user.id &&
-      currentPlateAppearance.hittingTeamReady &&
-      !currentPlateAppearance.pitchingTeamReady) ||
-    (currentPlateAppearance.pitchingTeam.userId === user.id &&
-      currentPlateAppearance.pitchingTeamReady &&
-      !currentPlateAppearance.hittingTeamReady);
+    (currentPlateAppearance?.hittingTeam.userId === user.id &&
+      currentPlateAppearance?.hittingTeamReady &&
+      !currentPlateAppearance?.pitchingTeamReady) ||
+    (currentPlateAppearance?.pitchingTeam.userId === user.id &&
+      currentPlateAppearance?.pitchingTeamReady &&
+      !currentPlateAppearance?.hittingTeamReady);
+
+  const displayedPlateAppearance =
+    currentPlateAppearance && !nextPlateAppearance ? currentPlateAppearance : nextPlateAppearance;
+
+  const plateAppearances = game.game.plateAppearances
+    .filter(
+      (pa) =>
+        pa.inning === game.game.gameState.inning &&
+        pa.topOfInning === game.game.gameState.topOfInning &&
+        pa.id !== displayedPlateAppearance?.id
+    )
+    .sort((a, b) => b.id - a.id);
   return (
-    <>
-      <GamePlayDisplay
-        pitcherName={`${currentPitcher.player.first_name} ${currentPitcher.player.last_name}`}
-        batterName={`${currentBatter.player.first_name} ${currentBatter.player.last_name}`}
-        runners={[game.game.gameState.runnerOn1st, game.game.gameState.runnerOn2nd, game.game.gameState.runnerOn3rd]}
-        inning={game.game.gameState.inning}
-        outs={game.game.gameState.outs}
-        topOfInning={game.game.gameState.topOfInning}
-        awayScore={game.game.gameState.awayScore}
-        homeScore={game.game.gameState.homeScore}
-        playResult={playResult}
-      />
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        {game.game.gameStatus !== 'Final' ? (
-          !waitingForOtherTeam ? (
-            <PrimaryButtonWithIcon
-              aria-controls='basic-modal'
-              onClick={async (e) => {
-                const updatedPa = await advanceGame({
-                  gameCode,
-                });
-                setPlayResult({
-                  battedBallOutcome: updatedPa.data.battedBallOutcome,
-                  hitQuality: updatedPa.data.hitQuality,
-                  paOutcome: updatedPa.data.paOutcome,
-                });
-                await refetch();
-              }}
-            >
-              <Baseball />
-              <span className='ml-2'>Submit Plate Appearance</span>
-            </PrimaryButtonWithIcon>
+    <div className='flex flex-col space-y-4'>
+      <Linescore homeLinescore={homeLinescores} awayLinescore={awayLinescores} />
+
+      <div className='flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4'>
+        <div className='flex-1'>
+          {displayedPlateAppearance && <GamePlayDisplay plateAppearance={displayedPlateAppearance} />}
+        </div>
+        <div>
+          {game.game.gameStatus !== 'Final' ? (
+            !waitingForOtherTeam ? (
+              <PrimaryButtonWithIcon aria-controls='basic-modal' onClick={handleAdvanceGame}>
+                <Baseball />
+                <span className='ml-2'>Submit Plate Appearance</span>
+              </PrimaryButtonWithIcon>
+            ) : (
+              <div>Waiting for other team</div>
+            )
           ) : (
-            <div>Waiting for other team</div>
-          )
-        ) : (
-          'Game Over'
-        )}
+            'Game Over'
+          )}
+        </div>
       </div>
-      <GameResults
-        homeBoxScore={game.homeBoxScore}
-        awayBoxScore={game.awayBoxScore}
-        homeLinescore={homeLinescores}
-        awayLinescore={awayLinescores}
-        playByPlay={game.game.plateAppearances}
-      />
-    </>
+
+      <div className='flex flex-col sm:flex-row justify-between items-start space-y-4 sm:space-y-0 sm:space-x-4'>
+        <div className='flex-1 flex flex-col items-center sm:items-center'>
+          <h1 className='text-2xl font-bold text-center'>
+            {formatInningText(game.game.gameState.inning, game.game.gameState.topOfInning)}
+          </h1>
+          <PlayByPlayTable plays={plateAppearances} />
+        </div>
+        <div className='flex-1'>
+          <GameBoxScoreTabs
+            homeBoxScore={game.homeBoxScore}
+            awayBoxScore={game.awayBoxScore}
+            showTabs={game.game.gameState.topOfInning}
+            currentHitter={currentPlateAppearance?.hitter}
+          />
+        </div>
+      </div>
+    </div>
   );
 }

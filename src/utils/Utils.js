@@ -2,8 +2,8 @@ import resolveConfig from 'tailwindcss/resolveConfig';
 
 export const tailwindConfig = () => {
   // Tailwind config
-  return resolveConfig('./src/css/tailwind.config.js')
-}
+  return resolveConfig('./src/css/tailwind.config.js');
+};
 
 export const hexToRGB = (h) => {
   let r = 0;
@@ -21,14 +21,81 @@ export const hexToRGB = (h) => {
   return `${+r},${+g},${+b}`;
 };
 
-export const formatValue = (value) => Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  maximumSignificantDigits: 3,
-  notation: 'compact',
-}).format(value);
+export const formatValue = (value) =>
+  Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumSignificantDigits: 3,
+    notation: 'compact',
+  }).format(value);
 
-export const formatThousands = (value) => Intl.NumberFormat('en-US', {
-  maximumSignificantDigits: 3,
-  notation: 'compact',
-}).format(value);
+export const formatThousands = (value) =>
+  Intl.NumberFormat('en-US', {
+    maximumSignificantDigits: 3,
+    notation: 'compact',
+  }).format(value);
+
+export const formatPlayResultText = ({ playResult, hitter }) => {
+  if (!playResult || !playResult.paOutcome) return '';
+  let resultText = hitter ? `${hitter.first_name} ${hitter.last_name} ` : '';
+  switch (playResult?.paOutcome?.name) {
+    case 'strikeout':
+      resultText += 'struck out';
+      break;
+    case 'walk':
+      resultText += 'walked';
+      break;
+    case 'homerun':
+      resultText += 'homered';
+      break;
+    case 'single':
+      resultText += `singled on a ${formatHitResult(playResult.battedBallOutcome)}`;
+      break;
+    case 'double':
+      resultText += `doubled on a ${formatHitResult(playResult.battedBallOutcome)}`;
+      break;
+    case 'triple':
+      resultText += `tripled on a ${formatHitResult(playResult.battedBallOutcome)}`;
+      break;
+    case 'Out':
+      switch (playResult.battedBallOutcome.name) {
+        case 'groundball':
+          resultText += 'grounded out';
+          break;
+        case 'flyball':
+          resultText += 'flied out';
+          break;
+        case 'lineDrive':
+          resultText += 'lined out';
+          break;
+        default:
+          resultText += 'made an out';
+      }
+      break;
+    default:
+      resultText += 'did something';
+  }
+  if (playResult.runnersScored?.length > 0) {
+    resultText += `. ${
+      playResult.runnersScored.map((runner) => `${runner.first_name} ${runner.last_name}`).join(', ') || ''
+    } scored`;
+  }
+  return resultText;
+};
+
+export const formatHitResult = (battedBallOutcome) => {
+  switch (battedBallOutcome.name) {
+    case 'groundball':
+      return 'groundball';
+    case 'flyball':
+      return 'fly ball';
+    case 'lineDrive':
+      return 'line drive';
+    default:
+      return 'hit';
+  }
+};
+
+export const formatInningText = (inning, topOfInning) => {
+  return `${topOfInning ? 'Top' : 'Bottom'} ${inning}`;
+};
