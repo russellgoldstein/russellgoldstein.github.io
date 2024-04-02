@@ -18,24 +18,12 @@ export const PlayByPlayTable = ({ plays }) => {
         runnersScored.push(play.hitter);
       }
 
-      return (
-        <GamePlayDisplay
-          pitcherName={`${play.pitcher.first_name} ${play.pitcher.last_name}`}
-          batterName={`${play.hitter.first_name} ${play.hitter.last_name}`}
-          runners={[play.runnerOn1st, play.runnerOn2nd, play.runnerOn3rd]}
-          inning={play.inning}
-          outs={play.outs}
-          topOfInning={play.topOfInning}
-          awayScore={play.awayScore}
-          homeScore={play.homeScore}
-          playResult={{
-            paOutcome: play.paOutcome,
-            battedBallOutcome: play.battedBallOutcome,
-            hitQuality: play.hitQuality,
-            runnersScored,
-          }}
-        />
-      );
+      const playResult = {
+        battedBallOutcome: play.battedBallOutcome,
+        hitQuality: play.hitQuality,
+        paOutcome: play.paOutcome,
+      };
+      return <GamePlayDisplay plateAppearance={play} runnersScored={runnersScored} playResult={playResult} />;
     })
   ) : (
     <div>No plays yet</div>
