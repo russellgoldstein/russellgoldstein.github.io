@@ -18,7 +18,12 @@ export const PlayByPlayTable = ({ plays }) => {
         runnersScored.push(play.hitter);
       }
 
-      return <GamePlayDisplay plateAppearance={play} runnersScored={runnersScored} />;
+      const playResult = {
+        battedBallOutcome: play.battedBallOutcome,
+        hitQuality: play.hitQuality,
+        paOutcome: play.paOutcome,
+      };
+      return <GamePlayDisplay plateAppearance={play} runnersScored={runnersScored} playResult={playResult} />;
     })
   ) : (
     <div>No plays yet</div>

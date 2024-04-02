@@ -36,6 +36,11 @@ export default function Game() {
       const initialPlateAppearance = game.game.plateAppearances.find(
         (pa) => pa.id === game.game.gameState.currentPlateAppearanceId
       );
+      setPlayResult({
+        battedBallOutcome: initialPlateAppearance.battedBallOutcome,
+        hitQuality: initialPlateAppearance.hitQuality,
+        paOutcome: initialPlateAppearance.paOutcome,
+      });
       setCurrentPlateAppearance(initialPlateAppearance);
     }
   }, [game, nextPlateAppearance]);
@@ -63,8 +68,9 @@ export default function Game() {
         // This delay ensures the user sees the flash before any new data changes
 
         setNextPlateAppearance(nextPlateAppearance);
-      }, 2000);
-      await refetch();
+        refetch();
+        setPlayResult(null);
+      }, 3000);
     }
   };
 
@@ -101,13 +107,17 @@ export default function Game() {
       <div className='flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4'>
         <div className='flex-1'>
           {displayedPlateAppearance && (
-            <GamePlayDisplay plateAppearance={displayedPlateAppearance} updatedResult={updatedResult} />
+            <GamePlayDisplay
+              plateAppearance={displayedPlateAppearance}
+              updatedResult={updatedResult}
+              playResult={playResult}
+            />
           )}
         </div>
         <div>
           {game.game.gameStatus !== 'Final' ? (
             !waitingForOtherTeam ? (
-              <PrimaryButtonWithIcon aria-controls='basic-modal' onClick={handleAdvanceGame}>
+              <PrimaryButtonWithIcon aria-controls='basic-modal' onClick={handleAdvanceGame} disabled={isLoading}>
                 <Baseball />
                 <span className='ml-2'>Submit Plate Appearance</span>
               </PrimaryButtonWithIcon>

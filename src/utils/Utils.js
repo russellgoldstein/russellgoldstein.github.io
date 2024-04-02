@@ -57,7 +57,7 @@ export const formatPlayResultText = ({ playResult, hitter }) => {
     case 'triple':
       resultText += `tripled on a ${formatHitResult(playResult.battedBallOutcome)}`;
       break;
-    case 'Out':
+    case 'out':
       switch (playResult.battedBallOutcome.name) {
         case 'groundball':
           resultText += 'grounded out';

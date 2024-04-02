@@ -2,16 +2,11 @@ import React, { useEffect, useState } from 'react';
 import BaseballDiamondSVG from '../icons/BaseballDiamond';
 import { formatPlayResultText } from '../../utils/Utils';
 
-const GamePlayDisplay = ({ plateAppearance, runnersScored, updatedResult = false }) => {
+const GamePlayDisplay = ({ plateAppearance, runnersScored, updatedResult = false, playResult }) => {
   const pitcherName = `${plateAppearance.pitcher.first_name} ${plateAppearance.pitcher.last_name}`;
   const hitterName = `${plateAppearance.hitter.first_name} ${plateAppearance.hitter.last_name}`;
   const runners = [plateAppearance.runnerOn1st, plateAppearance.runnerOn2nd, plateAppearance.runnerOn3rd];
-  const playResult = {
-    paOutcome: plateAppearance.paOutcome,
-    battedBallOutcome: plateAppearance.battedBallOutcome,
-    hitQuality: plateAppearance.hitQuality,
-    runnersScored: runnersScored,
-  };
+
   // State to control the flash effect
   const [flash, setFlash] = useState(false);
 
@@ -20,7 +15,7 @@ const GamePlayDisplay = ({ plateAppearance, runnersScored, updatedResult = false
       setFlash(true);
       const timer = setTimeout(() => {
         setFlash(false);
-      }, 1000); // Flash for 1 second
+      }, 2000); // Flash for 1 second
       return () => clearTimeout(timer);
     }
   }, [updatedResult]);
