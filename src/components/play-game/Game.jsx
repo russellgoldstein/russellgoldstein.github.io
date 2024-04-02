@@ -91,14 +91,14 @@ export default function Game() {
   const displayedPlateAppearance =
     currentPlateAppearance && !nextPlateAppearance ? currentPlateAppearance : nextPlateAppearance;
 
-  const plateAppearances = game.game.plateAppearances
-    .filter(
-      (pa) =>
-        pa.inning === game.game.gameState.inning &&
-        pa.topOfInning === game.game.gameState.topOfInning &&
-        pa.id !== displayedPlateAppearance?.id
-    )
-    .sort((a, b) => b.id - a.id);
+  const plateAppearancesMap = game.game.plateAppearances.reduce((map, pa) => {
+    const key = `${pa.topOfInning ? 'Top' : 'Bottom'} ${pa.inning}`;
+    if (!map[key]) {
+      map[key] = [];
+    }
+    map[key].push(pa);
+    return map;
+  }, {});
   console.log({ displayedPlateAppearance });
   return (
     <div className='flex flex-col space-y-4'>
@@ -132,10 +132,19 @@ export default function Game() {
 
       <div className='flex flex-col sm:flex-row justify-between items-start space-y-4 sm:space-y-0 sm:space-x-4'>
         <div className='flex-1 flex flex-col items-center sm:items-center'>
-          <h1 className='text-2xl font-bold text-center'>
-            {formatInningText(game.game.gameState.inning, game.game.gameState.topOfInning)}
-          </h1>
-          <PlayByPlayTable plays={plateAppearances} />
+          <div className='w-full overflow-auto max-h-[550px]'>
+            {' '}
+            {/* Adjust the max-h-[size] as needed */}
+            {plateAppearancesMap &&
+              Object.keys(plateAppearancesMap)
+                .reverse()
+                .map((key) => (
+                  <div key={key} className='space-y-4'>
+                    <h1 className='text-2xl font-bold text-center'>{key}</h1>
+                    <PlayByPlayTable plays={plateAppearancesMap[key]} />
+                  </div>
+                ))}
+          </div>
         </div>
         <div className='flex-1'>
           <GameBoxScoreTabs
