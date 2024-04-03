@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useAdvanceGameMutation, useGetGameStateQuery } from '../../services/gameApi';
+import { useAdvanceGameMutation, useGetGameStateQuery, usePatchPaMutation } from '../../services/gameApi';
 import { PrimaryButtonWithIcon } from '../global/PrimaryButtonWithIcon';
 import { Baseball } from '../icons/Baseball';
 import GamePlayDisplay from '../matchup/GamePlayDisplay';
@@ -17,8 +17,10 @@ export default function Game() {
   const [nextPlateAppearance, setNextPlateAppearance] = useState(null);
   const [currentPlateAppearance, setCurrentPlateAppearance] = useState(null);
   const [updatedResult, setUpdatedResult] = useState(false);
+  const [unseenPlateAppearance, setUnseenPlateAppearance] = useState(null);
 
   const [advanceGame, { error, isLoading }] = useAdvanceGameMutation();
+  const [patchPa, { error: patchPaError, isLoading: patchPaIsLoading }] = usePatchPaMutation();
 
   useEffect(() => {
     // Setting up an interval to refetch the game state every 10 seconds
@@ -42,7 +44,17 @@ export default function Game() {
       });
       setCurrentPlateAppearance(initialPlateAppearance);
     }
-  }, [game, nextPlateAppearance]);
+
+    const unseenPa = game?.game.plateAppearances.find(
+      (pa) =>
+        pa.inning === game.game.gameState.inning &&
+        pa.topOfInning === game.game.gameState.topOfInning &&
+        pa.paOutcome !== null &&
+        ((pa.hittingTeam.userId === user.id && !pa.hittingTeamViewedAt) ||
+          (pa.pitchingTeam.userId === user.id && !pa.pitchingTeamViewedAt))
+    );
+    setUnseenPlateAppearance(unseenPa);
+  }, [game, nextPlateAppearance, user]);
 
   const handleAdvanceGame = async () => {
     const { data } = await advanceGame({ gameCode });
@@ -85,16 +97,15 @@ export default function Game() {
       currentPlateAppearance?.pitchingTeamReadyAt &&
       !currentPlateAppearance?.hittingTeamReadyAt);
 
-  const displayedPlateAppearance =
-    currentPlateAppearance && !nextPlateAppearance ? currentPlateAppearance : nextPlateAppearance;
+  const displayedPlateAppearance = unseenPlateAppearance
+    ? unseenPlateAppearance
+    : currentPlateAppearance && !nextPlateAppearance
+    ? currentPlateAppearance
+    : nextPlateAppearance;
 
+  console.log({ unseenPlateAppearance });
   const plateAppearancesMap = game.game.plateAppearances
-    .filter(
-      (pa) =>
-        pa.inning === game.game.gameState.inning &&
-        pa.topOfInning === game.game.gameState.topOfInning &&
-        pa.id !== displayedPlateAppearance?.id
-    )
+    .filter((pa) => pa.id !== displayedPlateAppearance?.id)
     .sort((a, b) => b.id - a.id)
     .reduce((map, pa) => {
       const key = `${pa.topOfInning ? 'Top' : 'Bottom'} ${pa.inning}`;
@@ -120,6 +131,29 @@ export default function Game() {
           )}
         </div>
         <div>
+          {unseenPlateAppearance && (
+            <div className='bg-red-500 text-white p-2 rounded-md'>
+              There is a new plate appearance available. Click{' '}
+              <button
+                className='underline'
+                onClick={() => {
+                  setCurrentPlateAppearance(unseenPlateAppearance);
+                  setPlayResult({
+                    battedBallOutcome: unseenPlateAppearance.battedBallOutcome,
+                    hitQuality: unseenPlateAppearance.hitQuality,
+                    paOutcome: unseenPlateAppearance.paOutcome,
+                  });
+                  setUpdatedResult(true);
+                  patchPa({ gameCode, paId: unseenPlateAppearance.id });
+                }}
+              >
+                here
+              </button>{' '}
+              to view it.
+            </div>
+          )}
+        </div>
+        <div>
           {game.game.gameStatus !== 'Final' ? (
             !waitingForOtherTeam ? (
               <PrimaryButtonWithIcon aria-controls='basic-modal' onClick={handleAdvanceGame} disabled={isLoading}>
@@ -141,14 +175,12 @@ export default function Game() {
             {' '}
             {/* Adjust the max-h-[size] as needed */}
             {plateAppearancesMap &&
-              Object.keys(plateAppearancesMap)
-                .reverse()
-                .map((key) => (
-                  <div key={key} className='space-y-4'>
-                    <h1 className='text-2xl font-bold text-center'>{key}</h1>
-                    <PlayByPlayTable plays={plateAppearancesMap[key]} />
-                  </div>
-                ))}
+              Object.keys(plateAppearancesMap).map((key) => (
+                <div key={key} className='space-y-4'>
+                  <h1 className='text-2xl font-bold text-center'>{key}</h1>
+                  <PlayByPlayTable plays={plateAppearancesMap[key]} />
+                </div>
+              ))}
           </div>
         </div>
         <div className='flex-1'>

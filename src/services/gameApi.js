@@ -47,6 +47,12 @@ export const gameApi = createApi({
         body,
       }),
     }),
+    patchPa: builder.mutation({
+      query: ({ gameCode, paId }) => ({
+        url: `games/${gameCode}/pa/${paId}`,
+        method: 'PATCH',
+      }),
+    }),
     postLineup: builder.mutation({
       query: ({ gameCode, body }) => ({
         url: `games/${gameCode}/lineups`,
@@ -97,4 +103,5 @@ export const {
   useAdvanceGameMutation,
   useSimFullGameMutation,
   useRestartGameMutation,
+  usePatchPaMutation,
 } = gameApi;
