@@ -7,7 +7,6 @@ import { useGetCurrentUserQuery } from '../../services/simApi';
 import { Linescore } from '../matchup/Linescore';
 import { GameBoxScoreTabs } from '../matchup/GameBoxScoreTabs';
 import PlayByPlayTable from '../matchup/PlayByPlayTable';
-import { formatInningText } from '../../utils/Utils';
 
 export default function Game() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -54,10 +53,8 @@ export default function Game() {
         hitQuality: plateAppearance.hitQuality,
         paOutcome: plateAppearance.paOutcome,
       });
-      console.log({ nextPlateAppearance, plateAppearance });
       setCurrentPlateAppearance(plateAppearance);
       if (nextPlateAppearance) {
-        console.log('Setting updated result');
         setUpdatedResult(true);
       }
       setTimeout(() => {
@@ -82,23 +79,31 @@ export default function Game() {
 
   const waitingForOtherTeam =
     (currentPlateAppearance?.hittingTeam.userId === user.id &&
-      currentPlateAppearance?.hittingTeamReady &&
-      !currentPlateAppearance?.pitchingTeamReady) ||
+      currentPlateAppearance?.hittingTeamReadyAt &&
+      !currentPlateAppearance?.pitchingTeamReadyAt) ||
     (currentPlateAppearance?.pitchingTeam.userId === user.id &&
-      currentPlateAppearance?.pitchingTeamReady &&
-      !currentPlateAppearance?.hittingTeamReady);
+      currentPlateAppearance?.pitchingTeamReadyAt &&
+      !currentPlateAppearance?.hittingTeamReadyAt);
 
   const displayedPlateAppearance =
     currentPlateAppearance && !nextPlateAppearance ? currentPlateAppearance : nextPlateAppearance;
 
-  const plateAppearancesMap = game.game.plateAppearances.reduce((map, pa) => {
-    const key = `${pa.topOfInning ? 'Top' : 'Bottom'} ${pa.inning}`;
-    if (!map[key]) {
-      map[key] = [];
-    }
-    map[key].push(pa);
-    return map;
-  }, {});
+  const plateAppearancesMap = game.game.plateAppearances
+    .filter(
+      (pa) =>
+        pa.inning === game.game.gameState.inning &&
+        pa.topOfInning === game.game.gameState.topOfInning &&
+        pa.id !== displayedPlateAppearance?.id
+    )
+    .sort((a, b) => b.id - a.id)
+    .reduce((map, pa) => {
+      const key = `${pa.topOfInning ? 'Top' : 'Bottom'} ${pa.inning}`;
+      if (!map[key]) {
+        map[key] = [];
+      }
+      map[key].push(pa);
+      return map;
+    }, {});
   console.log({ displayedPlateAppearance });
   return (
     <div className='flex flex-col space-y-4'>
