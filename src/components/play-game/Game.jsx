@@ -18,6 +18,7 @@ export default function Game() {
   const [currentPlateAppearance, setCurrentPlateAppearance] = useState(null);
   const [updatedResult, setUpdatedResult] = useState(false);
   const [unseenPlateAppearance, setUnseenPlateAppearance] = useState(null);
+  const [pauseRefetch, setPauseRefetch] = useState(false);
 
   const [advanceGame, { error, isLoading }] = useAdvanceGameMutation();
   const [patchPa, { error: patchPaError, isLoading: patchPaIsLoading }] = usePatchPaMutation();
@@ -25,7 +26,9 @@ export default function Game() {
   useEffect(() => {
     // Setting up an interval to refetch the game state every 10 seconds
     const interval = setInterval(() => {
-      refetch();
+      if (!pauseRefetch) {
+        refetch();
+      }
     }, 10000);
 
     // Clearing the interval when the component unmounts
@@ -72,13 +75,14 @@ export default function Game() {
       setTimeout(() => {
         // Reset updatedResult back to false after the flash duration
         setUpdatedResult(false);
-
+        setPauseRefetch(true);
         // Now update the currentPlateAppearance and nextPlateAppearance
         // This delay ensures the user sees the flash before any new data changes
 
         setNextPlateAppearance(nextPlateAppearance);
         refetch();
         setPlayResult(null);
+        setPauseRefetch(false);
       }, 3000);
     }
   };
@@ -136,7 +140,7 @@ export default function Game() {
               There is a new plate appearance available. Click{' '}
               <button
                 className='underline'
-                onClick={() => {
+                onClick={async () => {
                   setCurrentPlateAppearance(unseenPlateAppearance);
                   setPlayResult({
                     battedBallOutcome: unseenPlateAppearance.battedBallOutcome,
@@ -144,7 +148,15 @@ export default function Game() {
                     paOutcome: unseenPlateAppearance.paOutcome,
                   });
                   setUpdatedResult(true);
-                  patchPa({ gameCode, paId: unseenPlateAppearance.id });
+
+                  setTimeout(async () => {
+                    setPauseRefetch(true);
+                    await patchPa({ gameCode, paId: unseenPlateAppearance.id });
+                    setUpdatedResult(false);
+                    refetch();
+                    setPlayResult(null);
+                    setPauseRefetch(false);
+                  }, 3000);
                 }}
               >
                 here
