@@ -19,6 +19,7 @@ const GamePlayDisplay = ({ plateAppearance, runnersScored, updatedResult = false
       return () => clearTimeout(timer);
     }
   }, [updatedResult]);
+  
   return (
     <div
       className={`grid grid-cols-[auto_1fr] gap-5 items-start border-2 border-gray-300 rounded-lg p-5 max-w-md mx-auto ${

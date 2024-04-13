@@ -8,6 +8,7 @@ import { Linescore } from '../matchup/Linescore';
 import { GameBoxScoreTabs } from '../matchup/GameBoxScoreTabs';
 import PlayByPlayTable from '../matchup/PlayByPlayTable';
 import { formatInningText } from '../../utils/Utils';
+import GameStatusAction from './GameStatusAction';
 
 export default function Game() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -18,6 +19,7 @@ export default function Game() {
   const [nextPlateAppearance, setNextPlateAppearance] = useState(null);
   const [currentPlateAppearance, setCurrentPlateAppearance] = useState(null);
   const [updatedResult, setUpdatedResult] = useState(false);
+  const [hiddenPlateAppearance, setHiddenPlateAppearance] = useState(null);
 
   const [advanceGame, { error, isLoading }] = useAdvanceGameMutation();
 
@@ -36,14 +38,50 @@ export default function Game() {
       const initialPlateAppearance = game.game.plateAppearances.find(
         (pa) => pa.id === game.game.gameState.currentPlateAppearanceId
       );
-      setPlayResult({
-        battedBallOutcome: initialPlateAppearance.battedBallOutcome,
-        hitQuality: initialPlateAppearance.hitQuality,
-        paOutcome: initialPlateAppearance.paOutcome,
-      });
-      setCurrentPlateAppearance(initialPlateAppearance);
+      
+      if(initialPlateAppearance && currentPlateAppearance && initialPlateAppearance.id !== currentPlateAppearance.id){
+        const hiddenPlateAppearance = game.game.plateAppearances.find(
+          (pa) => pa.id === currentPlateAppearance.id
+        );
+        setHiddenPlateAppearance(hiddenPlateAppearance);
+      }else{
+        setPlayResult({
+          battedBallOutcome: initialPlateAppearance.battedBallOutcome,
+          hitQuality: initialPlateAppearance.hitQuality,
+          paOutcome: initialPlateAppearance.paOutcome,
+        });
+        setCurrentPlateAppearance(initialPlateAppearance);
+      }
+      
     }
   }, [game, nextPlateAppearance]);
+
+  const revealPlateAppearance = () => {
+    setCurrentPlateAppearance(hiddenPlateAppearance);
+    setHiddenPlateAppearance(null);
+    setPlayResult({
+      battedBallOutcome: hiddenPlateAppearance.battedBallOutcome,
+      hitQuality: hiddenPlateAppearance.hitQuality,
+      paOutcome: hiddenPlateAppearance.paOutcome,
+    })
+    setUpdatedResult(true);
+
+    
+    setTimeout(() => {
+      // Reset updatedResult back to false after the flash duration
+      const nextPlateAppearance = game.game.plateAppearances.find(
+        (pa) => pa.id === game.game.gameState.currentPlateAppearanceId
+      );
+      setUpdatedResult(false);
+
+      // Now update the currentPlateAppearance and nextPlateAppearance
+      // This delay ensures the user sees the flash before any new data changes
+
+      setNextPlateAppearance(nextPlateAppearance);
+      refetch();
+      setPlayResult(null);
+    }, 3000);
+  }
 
   const handleAdvanceGame = async () => {
     const { data } = await advanceGame({ gameCode });
@@ -54,10 +92,9 @@ export default function Game() {
         hitQuality: plateAppearance.hitQuality,
         paOutcome: plateAppearance.paOutcome,
       });
-      console.log({ nextPlateAppearance, plateAppearance });
+      
       setCurrentPlateAppearance(plateAppearance);
       if (nextPlateAppearance) {
-        console.log('Setting updated result');
         setUpdatedResult(true);
       }
       setTimeout(() => {
@@ -82,24 +119,35 @@ export default function Game() {
 
   const waitingForOtherTeam =
     (currentPlateAppearance?.hittingTeam.userId === user.id &&
-      currentPlateAppearance?.hittingTeamReady &&
-      !currentPlateAppearance?.pitchingTeamReady) ||
+      currentPlateAppearance?.hittingTeamReadyAt &&
+      !currentPlateAppearance?.pitchingTeamReadyAt) ||
     (currentPlateAppearance?.pitchingTeam.userId === user.id &&
-      currentPlateAppearance?.pitchingTeamReady &&
-      !currentPlateAppearance?.hittingTeamReady);
+      currentPlateAppearance?.pitchingTeamReadyAt &&
+      !currentPlateAppearance?.hittingTeamReadyAt);
 
   const displayedPlateAppearance =
     currentPlateAppearance && !nextPlateAppearance ? currentPlateAppearance : nextPlateAppearance;
 
-  const plateAppearancesMap = game.game.plateAppearances.reduce((map, pa) => {
-    const key = `${pa.topOfInning ? 'Top' : 'Bottom'} ${pa.inning}`;
-    if (!map[key]) {
-      map[key] = [];
-    }
-    map[key].push(pa);
-    return map;
-  }, {});
-  console.log({ displayedPlateAppearance });
+  const plateAppearancesMap = game.game.plateAppearances
+    .filter(pa => pa.id !== displayedPlateAppearance?.id && pa.id !== hiddenPlateAppearance?.id)
+    .sort((a, b) => {
+      if (a.inning !== b.inning) {
+        return a.inning - b.inning; // Sort by inning descending
+      }
+      if (a.topOfInning !== b.topOfInning) {
+        return b.topOfInning ? 1 : -1; // Sort by bottom of inning first, then top of inning
+      }
+      return b.id - a.id; // Sort by pa.id descending
+    })
+    .reduce((map, pa) => {
+      const key = `${pa.topOfInning ? 'Top' : 'Bottom'} ${pa.inning}`;
+      if (!map[key]) {
+        map[key] = [];
+      }
+      map[key].push(pa);
+      return map;
+    }, {});
+  
   return (
     <div className='flex flex-col space-y-4'>
       <Linescore homeLinescore={homeLinescores} awayLinescore={awayLinescores} />
@@ -115,18 +163,7 @@ export default function Game() {
           )}
         </div>
         <div>
-          {game.game.gameStatus !== 'Final' ? (
-            !waitingForOtherTeam ? (
-              <PrimaryButtonWithIcon aria-controls='basic-modal' onClick={handleAdvanceGame} disabled={isLoading}>
-                <Baseball />
-                <span className='ml-2'>Submit Plate Appearance</span>
-              </PrimaryButtonWithIcon>
-            ) : (
-              <div>Waiting for other team</div>
-            )
-          ) : (
-            'Game Over'
-          )}
+        <GameStatusAction gameStatus={game.game.gameStatus} waitingForOtherTeam={waitingForOtherTeam} hiddenPlateAppearance={hiddenPlateAppearance} handleAdvanceGame={handleAdvanceGame} isLoading={isLoading} revealPlateAppearance={revealPlateAppearance} />
         </div>
       </div>
 

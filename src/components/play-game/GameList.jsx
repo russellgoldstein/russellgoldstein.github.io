@@ -74,7 +74,7 @@ export default function GameList() {
           return (
             <>
               <PrimaryButtonWithIcon
-                disabled={!row.awayTeamReady || !row.homeTeamReady}
+                disabled={!row.awayTeamReadyAt || !row.homeTeamReadyAt}
                 aria-controls='basic-modal'
                 onClick={async (e) => {
                   await startGame({ gameCode: row.gameCode });
@@ -85,7 +85,7 @@ export default function GameList() {
                 <span className='ml-2'>Start Game</span>
               </PrimaryButtonWithIcon>
               <PrimaryButtonWithIcon
-                disabled={!row.awayTeamReady || !row.homeTeamReady}
+                disabled={!row.awayTeamReadyAt || !row.homeTeamReadyAt}
                 aria-controls='basic-modal'
                 onClick={async (e) => {
                   await simFullGame({ gameCode: row.gameCode });
